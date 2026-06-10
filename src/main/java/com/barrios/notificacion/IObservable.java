@@ -1,9 +1,9 @@
 package com.barrios.notificacion;
 
 public interface IObservable {
-    void agregarObservador(IObserver observador);
+    void agregarObserver(IObserver observador);
 
-    void removerObservador(IObserver observador);
+    void removerObserver(IObserver observador);
 
-    void notificarObservadores(String mensaje);
+    void notificarObserver(String mensaje);
 }

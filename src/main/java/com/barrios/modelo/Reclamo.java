@@ -31,7 +31,7 @@ public class Reclamo implements IObservable {
 
     public void avanzarEstado() {
         estado.avanzar(this);
-        notificarObservers(this.estado.getNombre());
+        notificarObserver(this.estado.getNombre());
     }
 
     // --- IObservable ---
@@ -47,7 +47,7 @@ public class Reclamo implements IObservable {
     }
 
     @Override
-    public void notificarObservers(String evento) {
+    public void notificarObserver(String evento) {
         for (IObserver observer : observers) {
             observer.actualizar(evento, this);
         }
