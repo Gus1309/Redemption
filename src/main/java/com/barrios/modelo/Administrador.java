@@ -7,7 +7,7 @@ public class Administrador extends Usuario {
     }
 
     public Administrador(Long id, String nombre, String email, String area) {
-        super(id, nombre, email);
+        super(id, nombre, null, email, null, "ADMINISTRADOR");
         this.area = area;
     }
 

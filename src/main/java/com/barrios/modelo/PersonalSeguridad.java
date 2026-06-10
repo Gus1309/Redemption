@@ -7,7 +7,7 @@ public class PersonalSeguridad extends Usuario {
     }
 
     public PersonalSeguridad(Long id, String nombre, String email, String turno) {
-        super(id, nombre, email);
+        super(id, nombre, null, email, null, "PERSONAL_SEGURIDAD");
         this.turno = turno;
     }
 
