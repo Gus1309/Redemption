@@ -3,9 +3,10 @@ package com.barrios.estado;
 import com.barrios.modelo.Reclamo;
 
 public class EstadoPendiente implements IEstadoReclamo {
+
     @Override
     public void avanzar(Reclamo reclamo) {
-        // TODO: avanzar a EstadoEnProceso.
+        reclamo.setEstado(new EstadoEnProceso());
     }
 
     @Override

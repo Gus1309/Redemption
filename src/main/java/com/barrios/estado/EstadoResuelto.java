@@ -3,9 +3,11 @@ package com.barrios.estado;
 import com.barrios.modelo.Reclamo;
 
 public class EstadoResuelto implements IEstadoReclamo {
+
     @Override
     public void avanzar(Reclamo reclamo) {
-        // TODO: mantener estado final o definir comportamiento.
+        // Estado final: no hay transición posible.
+        System.out.println("El reclamo ya se encuentra en estado Resuelto. No puede avanzar.");
     }
 
     @Override
