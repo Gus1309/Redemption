@@ -7,7 +7,7 @@ public class Tecnico extends Usuario {
     }
 
     public Tecnico(Long id, String nombre, String email, String especialidad) {
-        super(id, nombre, email);
+        super(id, nombre, null, email, null, "TECNICO");
         this.especialidad = especialidad;
     }
 
