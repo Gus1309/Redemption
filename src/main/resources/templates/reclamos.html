@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Reclamos')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('reclamos', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Tablero de reclamos', 'Vista kanban minimalista para seguir el estado operativo de cada reclamo.', ${barrio})}"></header>
+
+            <section class="kanban-grid">
+                <article class="kanban-column">
+                    <div class="kanban-header">
+                        <h2>Pendiente</h2>
+                        <span class="kanban-count" th:text="${#lists.size(pendientes)}">0</span>
+                    </div>
+                    <div class="reclamo-card" th:each="reclamo : ${pendientes}">
+                        <h3 th:text="'Reclamo #' + ${reclamo.id}">Reclamo</h3>
+                        <p th:text="${reclamo.descripcion}">Descripcion</p>
+                        <div class="card-meta">
+                            <span th:text="${barrio.nombre}">Barrio</span>
+                            <span th:text="${reclamo.fecha}">Fecha</span>
+                            <span class="badge pendiente">PENDIENTE</span>
+                        </div>
+                    </div>
+                    <div class="empty-state" th:if="${#lists.isEmpty(pendientes)}"><strong>Sin pendientes</strong><span>La columna esta limpia.</span></div>
+                </article>
+
+                <article class="kanban-column">
+                    <div class="kanban-header">
+                        <h2>En proceso</h2>
+                        <span class="kanban-count" th:text="${#lists.size(enProceso)}">0</span>
+                    </div>
+                    <div class="reclamo-card" th:each="reclamo : ${enProceso}">
+                        <h3 th:text="'Reclamo #' + ${reclamo.id}">Reclamo</h3>
+                        <p th:text="${reclamo.descripcion}">Descripcion</p>
+                        <div class="card-meta">
+                            <span th:text="${barrio.nombre}">Barrio</span>
+                            <span th:text="${reclamo.fecha}">Fecha</span>
+                            <span class="badge en-proceso">EN_PROCESO</span>
+                        </div>
+                    </div>
+                    <div class="empty-state" th:if="${#lists.isEmpty(enProceso)}"><strong>Sin trabajo activo</strong><span>No hay reclamos en proceso.</span></div>
+                </article>
+
+                <article class="kanban-column">
+                    <div class="kanban-header">
+                        <h2>Resuelto</h2>
+                        <span class="kanban-count" th:text="${#lists.size(resueltos)}">0</span>
+                    </div>
+                    <div class="reclamo-card" th:each="reclamo : ${resueltos}">
+                        <h3 th:text="'Reclamo #' + ${reclamo.id}">Reclamo</h3>
+                        <p th:text="${reclamo.descripcion}">Descripcion</p>
+                        <div class="card-meta">
+                            <span th:text="${barrio.nombre}">Barrio</span>
+                            <span th:text="${reclamo.fecha}">Fecha</span>
+                            <span class="badge resuelta">RESUELTO</span>
+                        </div>
+                    </div>
+                    <div class="empty-state" th:if="${#lists.isEmpty(resueltos)}"><strong>Sin resueltos</strong><span>Todavia no hay reclamos cerrados.</span></div>
+                </article>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

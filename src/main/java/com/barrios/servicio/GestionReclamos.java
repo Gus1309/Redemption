@@ -13,8 +13,7 @@ public class GestionReclamos {
 
     public ResultadoOperacion<Reclamo> registrarReclamo(Barrio barrio, Reclamo reclamo) {
         barrio.agregarReclamo(reclamo);
-        String mensaje = "[OK] Reclamo creado en estado " + reclamo.getEstado().getNombre();
-        return ResultadoOperacion.ok(mensaje, reclamo);
+        return ResultadoOperacion.ok("[OK] Reclamo creado en estado " + reclamo.getEstado().getNombre(), reclamo);
     }
 
     public ResultadoOperacion<Reclamo> avanzarReclamo(Reclamo reclamo) {

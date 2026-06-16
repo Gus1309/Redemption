@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Novedades')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('novedades', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Novedades', 'Anuncios y comunicaciones visibles para el barrio.', ${barrio})}"></header>
+
+            <section class="feed-list" th:if="${!#lists.isEmpty(novedades)}">
+                <article class="feed-item" th:each="novedad : ${novedades}">
+                    <time th:text="${novedad.fecha}">Fecha</time>
+                    <div>
+                        <h2>Comunicado administrativo</h2>
+                        <p th:text="${novedad.descripcion}">Descripcion</p>
+                    </div>
+                </article>
+            </section>
+            <div class="empty-state table-panel" th:if="${#lists.isEmpty(novedades)}">
+                <strong>Sin novedades</strong>
+                <span>No hay anuncios publicados para este barrio.</span>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

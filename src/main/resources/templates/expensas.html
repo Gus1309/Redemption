@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Expensas')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('expensas', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Expensas administrativas', 'Consulta informativa de periodos y estados administrativos.', ${barrio})}"></header>
+
+            <div class="info-alert">
+                <span class="alert-mark">i</span>
+                <div>
+                    <strong>Vista administrativa.</strong>
+                    <div>El sistema no procesa pagos, cobranzas ni facturacion.</div>
+                </div>
+            </div>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2>Expensas</h2>
+                        <span class="muted" th:text="${#lists.size(expensas)} + ' registros administrativos'">0 registros</span>
+                    </div>
+                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                </div>
+                <div class="table-wrap" th:if="${!#lists.isEmpty(expensas)}">
+                    <table>
+                        <thead>
+                        <tr><th>Periodo</th><th>Monto</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="expensa : ${expensas}">
+                            <td>
+                                <div class="primary-cell" th:text="${expensa.periodo}">Periodo</div>
+                                <div class="secondary-cell">Periodo administrativo</div>
+                            </td>
+                            <td th:text="${expensa.monto}">Monto</td>
+                            <td><span class="badge pendiente" th:text="${expensa.estado}">Estado</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(expensas)}">
+                    <strong>Sin expensas</strong>
+                    <span>No hay registros administrativos cargados para este barrio.</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

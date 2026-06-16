@@ -56,22 +56,12 @@ public class Barrio {
         return Collections.unmodifiableList(viviendas);
     }
 
-    public void setViviendas(List<Vivienda> viviendas) {
-        this.viviendas.clear();
-        this.viviendas.addAll(viviendas);
-    }
-
     public void agregarVivienda(Vivienda vivienda) {
         viviendas.add(vivienda);
     }
 
     public List<Amenidad> getAmenidades() {
         return Collections.unmodifiableList(amenidades);
-    }
-
-    public void setAmenidades(List<Amenidad> amenidades) {
-        this.amenidades.clear();
-        this.amenidades.addAll(amenidades);
     }
 
     public void agregarAmenidad(Amenidad amenidad) {

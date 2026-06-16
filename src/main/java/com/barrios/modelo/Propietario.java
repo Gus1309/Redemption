@@ -30,22 +30,6 @@ public class Propietario extends Usuario {
         this.telefono = telefono;
     }
 
-    public Vivienda getVivienda() {
-        return vivienda;
-    }
-
-    public void setVivienda(Vivienda vivienda) {
-        this.vivienda = vivienda;
-    }
-
-    public List<AutorizacionVisita> getAutorizaciones() {
-        return Collections.unmodifiableList(autorizaciones);
-    }
-
-    public void agregarAutorizacion(AutorizacionVisita autorizacion) {
-        autorizaciones.add(autorizacion);
-    }
-
     @Override
     public Rol getRol() {
         return Rol.PROPIETARIO;

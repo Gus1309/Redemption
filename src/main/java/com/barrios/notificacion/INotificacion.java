@@ -2,7 +2,7 @@ package com.barrios.notificacion;
 
 public interface INotificacion {
     default String formatear(String mensaje) {
-        return mensaje;
+        return "[" + tipo() + "] " + mensaje;
     }
 
     default String generarMensaje() {

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Acceso')}"></head>
+<body>
+<main class="login-shell">
+    <section class="login-panel fade-up">
+        <div class="login-brand">
+            <span class="brand-mark">BP</span>
+            <div>
+                <strong>Barrios Privados</strong>
+                <small>Acceso demo</small>
+            </div>
+        </div>
+
+        <div class="login-heading">
+            <h1>Acceso al panel</h1>
+            <p>Selecciona tu perfil y el barrio para continuar.</p>
+        </div>
+
+        <form id="loginForm" class="login-form">
+            <fieldset class="role-grid role-list">
+                <legend>Perfil de usuario</legend>
+
+                <label class="role-card">
+                    <input type="radio" name="rol" value="ADMINISTRADOR" checked>
+                    <span>
+                        <strong>Administrador</strong>
+                        <small>Gestion general, novedades y expensas.</small>
+                    </span>
+                </label>
+
+                <label class="role-card">
+                    <input type="radio" name="rol" value="PROPIETARIO">
+                    <span>
+                        <strong>Propietario</strong>
+                        <small>Visitas, reservas y reclamos.</small>
+                    </span>
+                </label>
+
+                <label class="role-card">
+                    <input type="radio" name="rol" value="SEGURIDAD">
+                    <span>
+                        <strong>Seguridad</strong>
+                        <small>Accesos y visitantes autorizados.</small>
+                    </span>
+                </label>
+
+                <label class="role-card">
+                    <input type="radio" name="rol" value="TECNICO">
+                    <span>
+                        <strong>Tecnico</strong>
+                        <small>Reclamos e incidentes operativos.</small>
+                    </span>
+                </label>
+            </fieldset>
+
+            <label class="select-field">
+                <span>Barrio inicial</span>
+                <select name="barrioId" id="barrioId">
+                    <option value="1">Los Robles</option>
+                    <option value="2">La Escondida</option>
+                </select>
+            </label>
+
+            <button class="button login-submit" type="submit">Ingresar al panel</button>
+        </form>
+    </section>
+</main>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function (event) {
+        event.preventDefault();
+        const rol = new FormData(event.currentTarget).get("rol");
+        const barrioId = document.getElementById("barrioId").value;
+        window.location.href = `/barrios/${barrioId}?rol=${encodeURIComponent(rol)}`;
+    });
+</script>
+</body>
+</html>

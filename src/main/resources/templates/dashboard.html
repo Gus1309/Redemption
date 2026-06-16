@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Dashboard')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('dashboard', null)}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Dashboard general', 'Vista ejecutiva de barrios, operaciones y actividad reciente.', null)}"></header>
+
+            <section class="executive-summary">
+                <div>
+                    <span class="eyebrow">Resumen del sistema</span>
+                    <h2>Operaciones separadas por barrio</h2>
+                </div>
+                <div class="summary-line">
+                    <span th:text="${#lists.size(barrios)} + ' barrios'">2 barrios</span>
+                    <span>Datos en memoria</span>
+                    <span>Acceso simulado</span>
+                </div>
+            </section>
+
+            <section class="tenant-list">
+                <article class="tenant-row" th:each="item : ${barrios}">
+                    <div class="tenant-row-main">
+                        <span class="tenant-initial" th:text="${#strings.substring(item.barrio.nombre, 0, 1)}">L</span>
+                        <div>
+                            <h2 th:text="${item.barrio.nombre}">Los Robles</h2>
+                            <p th:text="${item.barrio.descripcion}">Descripcion del barrio</p>
+                        </div>
+                    </div>
+
+                    <div class="inline-metrics">
+                        <span><strong th:text="${item.resumen.reclamos}">0</strong> Reclamos</span>
+                        <span><strong th:text="${item.resumen.reservas}">0</strong> Reservas</span>
+                        <span><strong th:text="${item.resumen.accesos}">0</strong> Accesos</span>
+                        <span><strong th:text="${#lists.size(item.barrio.autorizaciones)}">0</strong> Visitas</span>
+                        <span><strong th:text="${item.resumen.incidentes}">0</strong> Incidentes</span>
+                        <span><strong th:text="${item.resumen.expensas}">0</strong> Expensas</span>
+                    </div>
+
+                    <div class="row-actions">
+                        <a class="button" th:href="@{/barrios/{id}(id=${item.barrio.id})}">Ver panel</a>
+                        <a class="button secondary" th:href="@{/barrios/{id}/reclamos(id=${item.barrio.id})}">Reclamos</a>
+                    </div>
+                </article>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

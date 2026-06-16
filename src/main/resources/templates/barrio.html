@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head(${barrio.nombre})}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('barrios', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header(${barrio.nombre}, ${barrio.descripcion}, ${barrio})}"></header>
+
+            <section class="executive-summary">
+                <div>
+                    <span class="eyebrow">Panel del barrio</span>
+                    <h2>Actividad operativa</h2>
+                </div>
+                <div class="inline-metrics is-large">
+                    <span><strong th:text="${resumen.reclamos}">0</strong> Reclamos</span>
+                    <span><strong th:text="${resumen.reservas}">0</strong> Reservas</span>
+                    <span><strong th:text="${resumen.accesos}">0</strong> Accesos</span>
+                    <span><strong th:text="${resumen.incidentes}">0</strong> Incidentes</span>
+                    <span><strong th:text="${resumen.expensas}">0</strong> Expensas</span>
+                </div>
+            </section>
+
+            <section class="module-list">
+                <a class="module-row" th:href="@{/barrios/{id}/visitas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Visitas</strong><span>Autorizaciones vigentes</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/accesos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Accesos</strong><span>Ingresos y egresos registrados</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Reservas</strong><span>Amenidades solicitadas</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/reclamos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Reclamos</strong><span>Tablero por estado</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Incidentes</strong><span>Eventos operativos</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/novedades(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Novedades</strong><span>Comunicaciones publicadas</span>
+                </a>
+                <a class="module-row" th:href="@{/barrios/{id}/expensas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <strong>Expensas</strong><span>Informacion administrativa</span>
+                </a>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>
