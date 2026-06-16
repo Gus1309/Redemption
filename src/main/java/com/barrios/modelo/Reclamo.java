@@ -23,7 +23,6 @@ public class Reclamo {
     }
 
     public void avanzarEstado() {
-        // TODO: implementar avance real de estado.
         estado.avanzar(this);
     }
 

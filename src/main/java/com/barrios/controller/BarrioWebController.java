@@ -1,0 +1,92 @@
+package com.barrios.controller;
+
+import com.barrios.modelo.Barrio;
+import com.barrios.modelo.Reclamo;
+import com.barrios.servicio.DatosDemoService;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
+
+@Controller
+public class BarrioWebController {
+    private final DatosDemoService datosDemoService;
+
+    public BarrioWebController(DatosDemoService datosDemoService) {
+        this.datosDemoService = datosDemoService;
+    }
+
+    @GetMapping("/barrios/{id}")
+    public String detalle(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("resumen", datosDemoService.obtenerResumen(barrio));
+        return "barrio";
+    }
+
+    @GetMapping("/barrios/{id}/visitas")
+    public String visitas(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("visitas", barrio.getAutorizaciones());
+        return "visitas";
+    }
+
+    @GetMapping("/barrios/{id}/accesos")
+    public String accesos(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("accesos", barrio.getAccesos());
+        return "accesos";
+    }
+
+    @GetMapping("/barrios/{id}/reservas")
+    public String reservas(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("reservas", barrio.getReservas());
+        return "reservas";
+    }
+
+    @GetMapping("/barrios/{id}/reclamos")
+    public String reclamos(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        List<Reclamo> reclamos = barrio.getReclamos();
+        model.addAttribute("pendientes", filtrarPorEstado(reclamos, "PENDIENTE"));
+        model.addAttribute("enProceso", filtrarPorEstado(reclamos, "EN_PROCESO"));
+        model.addAttribute("resueltos", filtrarPorEstado(reclamos, "RESUELTO"));
+        return "reclamos";
+    }
+
+    @GetMapping("/barrios/{id}/incidentes")
+    public String incidentes(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("incidentes", barrio.getIncidentes());
+        return "incidentes";
+    }
+
+    @GetMapping("/barrios/{id}/novedades")
+    public String novedades(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("novedades", barrio.getNovedades());
+        return "novedades";
+    }
+
+    @GetMapping("/barrios/{id}/expensas")
+    public String expensas(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("expensas", barrio.getExpensas());
+        return "expensas";
+    }
+
+    private Barrio cargarBarrio(Long id, Model model) {
+        Barrio barrio = datosDemoService.buscarBarrio(id)
+                .orElseThrow(() -> new IllegalArgumentException("Barrio inexistente: " + id));
+        model.addAttribute("barrio", barrio);
+        return barrio;
+    }
+
+    private List<Reclamo> filtrarPorEstado(List<Reclamo> reclamos, String estado) {
+        return reclamos.stream()
+                .filter(reclamo -> estado.equals(reclamo.getEstado().getNombre()))
+                .toList();
+    }
+}

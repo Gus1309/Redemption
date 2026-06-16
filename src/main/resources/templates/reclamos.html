@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reclamos</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="topbar"><div class="brand">Reclamos</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
+<main class="container">
+    <h1 class="page-title" th:text="'Reclamos - ' + ${barrio.nombre}">Reclamos</h1>
+    <section class="metric-grid">
+        <article class="card">
+            <h2>Pendiente</h2>
+            <p class="empty" th:if="${#lists.isEmpty(pendientes)}">Sin reclamos pendientes.</p>
+            <p th:each="reclamo : ${pendientes}" th:text="${reclamo.descripcion}">Reclamo</p>
+        </article>
+        <article class="card">
+            <h2>En proceso</h2>
+            <p class="empty" th:if="${#lists.isEmpty(enProceso)}">Sin reclamos en proceso.</p>
+            <p th:each="reclamo : ${enProceso}" th:text="${reclamo.descripcion}">Reclamo</p>
+        </article>
+        <article class="card">
+            <h2>Resuelto</h2>
+            <p class="empty" th:if="${#lists.isEmpty(resueltos)}">Sin reclamos resueltos.</p>
+            <p th:each="reclamo : ${resueltos}" th:text="${reclamo.descripcion}">Reclamo</p>
+        </article>
+    </section>
+</main>
+</body>
+</html>

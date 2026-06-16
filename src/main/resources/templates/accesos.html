@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accesos</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="topbar"><div class="brand">Accesos</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
+<main class="container">
+    <h1 class="page-title" th:text="'Accesos - ' + ${barrio.nombre}">Accesos</h1>
+    <section class="table-card">
+        <table>
+            <thead><tr><th>Visitante</th><th>Tipo</th><th>Fecha y hora</th></tr></thead>
+            <tbody>
+            <tr th:each="acceso : ${accesos}">
+                <td th:text="${acceso.visitante.nombre}">Visitante</td>
+                <td><span class="badge" th:text="${acceso.tipoAcceso}">INGRESO</span></td>
+                <td th:text="${acceso.fecha}">Fecha</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="empty" th:if="${#lists.isEmpty(accesos)}">No hay ingresos ni egresos para este barrio.</div>
+    </section>
+</main>
+</body>
+</html>

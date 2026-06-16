@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">Dashboard</div>
+    <nav class="nav">
+        <a class="secondary" th:href="@{/}">Inicio</a>
+    </nav>
+</header>
+<main class="container">
+    <h1 class="page-title">Barrios</h1>
+    <p class="muted">Cada card representa un barrio como tenant independiente. Los datos de un barrio no se mezclan con otro.</p>
+    <section class="metric-grid">
+        <article class="card" th:each="item : ${barrios}">
+            <h2 th:text="${item.barrio.nombre}">Los Robles</h2>
+            <p class="muted" th:text="${item.barrio.descripcion}">Descripcion</p>
+            <div class="metric-grid">
+                <div><div class="metric" th:text="${item.resumen.reclamos}">0</div><span class="muted">Reclamos</span></div>
+                <div><div class="metric" th:text="${item.resumen.reservas}">0</div><span class="muted">Reservas</span></div>
+                <div><div class="metric" th:text="${item.resumen.accesos}">0</div><span class="muted">Accesos</span></div>
+                <div><div class="metric" th:text="${item.resumen.expensas}">0</div><span class="muted">Expensas</span></div>
+            </div>
+            <a class="button" th:href="@{/barrios/{id}(id=${item.barrio.id})}">Ver barrio</a>
+        </article>
+    </section>
+</main>
+</body>
+</html>

@@ -18,4 +18,9 @@ public class PersonalSeguridad extends Usuario {
     public void setTurno(String turno) {
         this.turno = turno;
     }
+
+    @Override
+    public Rol getRol() {
+        return Rol.SEGURIDAD;
+    }
 }

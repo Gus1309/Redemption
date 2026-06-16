@@ -18,4 +18,9 @@ public class Administrador extends Usuario {
     public void setArea(String area) {
         this.area = area;
     }
+
+    @Override
+    public Rol getRol() {
+        return Rol.ADMINISTRADOR;
+    }
 }

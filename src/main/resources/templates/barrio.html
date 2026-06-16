@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${barrio.nombre}">Barrio</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand" th:text="${barrio.nombre}">Barrio</div>
+    <nav class="nav">
+        <a class="secondary" th:href="@{/dashboard}">Dashboard</a>
+    </nav>
+</header>
+<main class="container">
+    <h1 class="page-title" th:text="${barrio.nombre}">Barrio</h1>
+    <p class="muted" th:text="${barrio.descripcion}">Descripcion</p>
+    <section class="metric-grid">
+        <div class="card"><div class="metric" th:text="${resumen.reclamos}">0</div><span class="muted">Reclamos</span></div>
+        <div class="card"><div class="metric" th:text="${resumen.reservas}">0</div><span class="muted">Reservas</span></div>
+        <div class="card"><div class="metric" th:text="${resumen.accesos}">0</div><span class="muted">Accesos</span></div>
+        <div class="card"><div class="metric" th:text="${resumen.incidentes}">0</div><span class="muted">Incidentes</span></div>
+        <div class="card"><div class="metric" th:text="${resumen.expensas}">0</div><span class="muted">Expensas</span></div>
+    </section>
+    <section class="module-grid">
+        <a class="module-link" th:href="@{/barrios/{id}/visitas(id=${barrio.id})}">Visitas</a>
+        <a class="module-link" th:href="@{/barrios/{id}/accesos(id=${barrio.id})}">Accesos</a>
+        <a class="module-link" th:href="@{/barrios/{id}/reservas(id=${barrio.id})}">Reservas</a>
+        <a class="module-link" th:href="@{/barrios/{id}/reclamos(id=${barrio.id})}">Reclamos</a>
+        <a class="module-link" th:href="@{/barrios/{id}/incidentes(id=${barrio.id})}">Incidentes</a>
+        <a class="module-link" th:href="@{/barrios/{id}/novedades(id=${barrio.id})}">Novedades</a>
+        <a class="module-link" th:href="@{/barrios/{id}/expensas(id=${barrio.id})}">Expensas</a>
+    </section>
+</main>
+</body>
+</html>
