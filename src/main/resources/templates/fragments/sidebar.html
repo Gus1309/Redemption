@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<aside class="sidebar"
+       th:fragment="sidebar(active, tenant)"
+       th:with="rol=${param.rol != null ? param.rol[0] : 'ADMINISTRADOR'},
+                qs=${param.rol != null ? '?rol=' + param.rol[0] : ''}">
+    <a class="sidebar-brand" th:href="${'/dashboard' + qs}">
+        <span class="brand-mark">BP</span>
+        <span>
+            <strong>Barrios</strong>
+            <small th:text="${rol}">Gestion privada</small>
+        </span>
+    </a>
+
+    <nav class="sidebar-nav" aria-label="Navegacion principal">
+        <a th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
+            <span class="nav-icon">D</span> Dashboard
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'barrios'} ? ' is-active'">
+            <span class="nav-icon">B</span> Barrios
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'SEGURIDAD'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/visitas' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'visitas'} ? ' is-active'">
+            <span class="nav-icon">V</span> Visitas
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'SEGURIDAD'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/accesos' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'accesos'} ? ' is-active'">
+            <span class="nav-icon">A</span> Accesos
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/reservas' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'reservas'} ? ' is-active'">
+            <span class="nav-icon">R</span> Reservas
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'TECNICO'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/reclamos' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'reclamos'} ? ' is-active'">
+            <span class="nav-icon">C</span> Reclamos
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'TECNICO'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/incidentes' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'incidentes'} ? ' is-active'">
+            <span class="nav-icon">I</span> Incidentes
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'novedades'} ? ' is-active'">
+            <span class="nav-icon">N</span> Novedades
+        </a>
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO'}"
+           th:href="${tenant != null ? '/barrios/' + tenant.id + '/expensas' + qs : '/dashboard' + qs}"
+           th:classappend="${active == 'expensas'} ? ' is-active'">
+            <span class="nav-icon">E</span> Expensas
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <span class="status-dot"></span>
+        <div>
+            <strong>Acceso simulado</strong>
+            <small th:text="${rol}">Datos en memoria</small>
+        </div>
+    </div>
+</aside>
+</html>

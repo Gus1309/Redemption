@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accesos</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/head :: head('Accesos')}"></head>
 <body>
-<header class="topbar"><div class="brand">Accesos</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
-<main class="container">
-    <h1 class="page-title" th:text="'Accesos - ' + ${barrio.nombre}">Accesos</h1>
-    <section class="table-card">
-        <table>
-            <thead><tr><th>Visitante</th><th>Tipo</th><th>Fecha y hora</th></tr></thead>
-            <tbody>
-            <tr th:each="acceso : ${accesos}">
-                <td th:text="${acceso.visitante.nombre}">Visitante</td>
-                <td><span class="badge" th:text="${acceso.tipoAcceso}">INGRESO</span></td>
-                <td th:text="${acceso.fecha}">Fecha</td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="empty" th:if="${#lists.isEmpty(accesos)}">No hay ingresos ni egresos para este barrio.</div>
-    </section>
-</main>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('accesos', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Registro de accesos', 'Ingresos y egresos registrados por seguridad.', ${barrio})}"></header>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2>Movimientos</h2>
+                        <span class="muted" th:text="${#lists.size(accesos)} + ' movimientos'">0 movimientos</span>
+                    </div>
+                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                </div>
+                <div class="table-wrap" th:if="${!#lists.isEmpty(accesos)}">
+                    <table>
+                        <thead>
+                        <tr><th>Visitante</th><th>Tipo</th><th>Fecha y hora</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="acceso : ${accesos}">
+                            <td>
+                                <div class="primary-cell" th:text="${acceso.visitante.nombre}">Visitante</div>
+                                <div class="secondary-cell" th:text="${acceso.visitante.documento}">Documento</div>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${acceso.tipoAcceso == 'INGRESO'} ? ' ingreso' : ' egreso'"
+                                      th:text="${acceso.tipoAcceso}">INGRESO</span>
+                            </td>
+                            <td th:text="${acceso.fecha}">Fecha</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(accesos)}">
+                    <strong>Sin accesos registrados</strong>
+                    <span>No hay ingresos ni egresos para este barrio.</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
 </body>
 </html>

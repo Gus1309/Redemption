@@ -1,28 +1,49 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Incidentes</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/head :: head('Incidentes')}"></head>
 <body>
-<header class="topbar"><div class="brand">Incidentes</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
-<main class="container">
-    <h1 class="page-title" th:text="'Incidentes - ' + ${barrio.nombre}">Incidentes</h1>
-    <section class="table-card">
-        <table>
-            <thead><tr><th>Descripcion</th><th>Fecha</th><th>Estado</th></tr></thead>
-            <tbody>
-            <tr th:each="incidente : ${incidentes}">
-                <td th:text="${incidente.descripcion}">Incidente</td>
-                <td th:text="${incidente.fecha}">Fecha</td>
-                <td><span class="badge" th:text="${incidente.estado}">Estado</span></td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="empty" th:if="${#lists.isEmpty(incidentes)}">No hay incidentes para este barrio.</div>
-    </section>
-</main>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('incidentes', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Incidentes', 'Eventos operativos registrados para seguimiento tecnico.', ${barrio})}"></header>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2>Registro tecnico</h2>
+                        <span class="muted" th:text="${#lists.size(incidentes)} + ' incidentes'">0 incidentes</span>
+                    </div>
+                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                </div>
+                <div class="table-wrap" th:if="${!#lists.isEmpty(incidentes)}">
+                    <table>
+                        <thead>
+                        <tr><th>Descripcion</th><th>Fecha</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="incidente : ${incidentes}">
+                            <td>
+                                <div class="primary-cell" th:text="${incidente.descripcion}">Incidente</div>
+                                <div class="secondary-cell">Seguimiento de mantenimiento</div>
+                            </td>
+                            <td th:text="${incidente.fecha}">Fecha</td>
+                            <td>
+                                <span class="badge warning"
+                                      th:classappend="${incidente.estado == 'EN_REVISION'} ? ' en-revision'"
+                                      th:text="${incidente.estado}">Estado</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(incidentes)}">
+                    <strong>Sin incidentes</strong>
+                    <span>No hay eventos tecnicos registrados para este barrio.</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
 </body>
 </html>

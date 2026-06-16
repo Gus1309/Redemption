@@ -1,30 +1,47 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visitas</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/head :: head('Visitas')}"></head>
 <body>
-<header class="topbar"><div class="brand">Visitas</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
-<main class="container">
-    <h1 class="page-title" th:text="'Visitas - ' + ${barrio.nombre}">Visitas</h1>
-    <section class="table-card">
-        <table>
-            <thead><tr><th>Visitante</th><th>Documento</th><th>Propietario</th><th>Fecha</th><th>Estado</th></tr></thead>
-            <tbody>
-            <tr th:each="visita : ${visitas}">
-                <td th:text="${visita.visitante.nombre}">Juan Perez</td>
-                <td th:text="${visita.visitante.documento}">000</td>
-                <td th:text="${visita.propietario.nombre}">Propietario</td>
-                <td th:text="${visita.fecha}">Fecha</td>
-                <td><span class="badge" th:text="${visita.estado}">Estado</span></td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="empty" th:if="${#lists.isEmpty(visitas)}">No hay visitas autorizadas para este barrio.</div>
-    </section>
-</main>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('visitas', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Visitas autorizadas', 'Control de visitantes habilitados para ingresar al barrio.', ${barrio})}"></header>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2>Autorizaciones</h2>
+                        <span class="muted" th:text="${#lists.size(visitas)} + ' registros'">0 registros</span>
+                    </div>
+                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                </div>
+                <div class="table-wrap" th:if="${!#lists.isEmpty(visitas)}">
+                    <table>
+                        <thead>
+                        <tr><th>Visitante</th><th>Documento</th><th>Propietario</th><th>Fecha</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="visita : ${visitas}">
+                            <td>
+                                <div class="primary-cell" th:text="${visita.visitante.nombre}">Juan Perez</div>
+                                <div class="secondary-cell">Visitante autorizado</div>
+                            </td>
+                            <td th:text="${visita.visitante.documento}">000</td>
+                            <td th:text="${visita.propietario.nombre}">Propietario</td>
+                            <td th:text="${visita.fecha}">Fecha</td>
+                            <td><span class="badge autorizada" th:text="${visita.estado}">Estado</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="empty-state" th:if="${#lists.isEmpty(visitas)}">
+                    <strong>Sin visitas autorizadas</strong>
+                    <span>Este barrio no tiene autorizaciones cargadas.</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
 </body>
 </html>

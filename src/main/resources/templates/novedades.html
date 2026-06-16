@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novedades</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
-</head>
+<head th:replace="~{fragments/head :: head('Novedades')}"></head>
 <body>
-<header class="topbar"><div class="brand">Novedades</div><nav class="nav"><a class="secondary" th:href="@{/barrios/{id}(id=${barrio.id})}">Volver</a></nav></header>
-<main class="container">
-    <h1 class="page-title" th:text="'Novedades - ' + ${barrio.nombre}">Novedades</h1>
-    <section class="metric-grid">
-        <article class="card" th:each="novedad : ${novedades}">
-            <h2 th:text="${novedad.fecha}">Fecha</h2>
-            <p th:text="${novedad.descripcion}">Descripcion</p>
-        </article>
-    </section>
-    <div class="empty" th:if="${#lists.isEmpty(novedades)}">No hay novedades para este barrio.</div>
-</main>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('novedades', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Novedades', 'Anuncios y comunicaciones visibles para el barrio.', ${barrio})}"></header>
+
+            <section class="feed-list" th:if="${!#lists.isEmpty(novedades)}">
+                <article class="feed-item" th:each="novedad : ${novedades}">
+                    <time th:text="${novedad.fecha}">Fecha</time>
+                    <div>
+                        <h2>Comunicado administrativo</h2>
+                        <p th:text="${novedad.descripcion}">Descripcion</p>
+                    </div>
+                </article>
+            </section>
+            <div class="empty-state table-panel" th:if="${#lists.isEmpty(novedades)}">
+                <strong>Sin novedades</strong>
+                <span>No hay anuncios publicados para este barrio.</span>
+            </div>
+        </div>
+    </main>
+</div>
 </body>
 </html>
