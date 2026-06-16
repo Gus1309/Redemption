@@ -19,7 +19,6 @@ public class Incidente {
     }
 
     public void cambiarEstado(String nuevoEstado) {
-        // TODO: notificar observadores cuando se implemente el flujo.
         this.estado = nuevoEstado;
     }
 

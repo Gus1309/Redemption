@@ -18,4 +18,9 @@ public class Tecnico extends Usuario {
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
     }
+
+    @Override
+    public Rol getRol() {
+        return Rol.TECNICO;
+    }
 }

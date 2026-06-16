@@ -5,11 +5,11 @@ import com.barrios.modelo.Reclamo;
 public class EstadoResuelto implements IEstadoReclamo {
     @Override
     public void avanzar(Reclamo reclamo) {
-        // TODO: mantener estado final o definir comportamiento.
+        reclamo.setEstado(this);
     }
 
     @Override
     public String getNombre() {
-        return "Resuelto";
+        return "RESUELTO";
     }
 }

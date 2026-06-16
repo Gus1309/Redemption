@@ -37,4 +37,6 @@ public abstract class Usuario {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public abstract Rol getRol();
 }

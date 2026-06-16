@@ -1,47 +1,46 @@
 # Sistema de Gestión de Barrios Privados
 
+Proyecto final universitario orientado a modelar e implementar una versión funcional, demostrable y extensible de un sistema de gestión para barrios privados.
 
-El objetivo del sistema es modelar una solución orientada a objetos para la administración operativa de barrios privados, contemplando la gestión de usuarios, viviendas, visitantes, accesos, reservas de amenidades, reclamos, incidentes, novedades y expensas administrativas.
+La entrega actual está implementada en Java puro, con datos en memoria, sin frameworks externos ni base de datos. El objetivo de esta versión es demostrar los casos de uso principales del sistema, los patrones de diseño aplicados y una separación clara entre dominio, servicios, permisos, notificaciones y demo por consola.
 
 ---
 
-## Alcance del sistema
+## Alcance implementado
 
-El sistema contempla las siguientes funcionalidades principales:
+El sistema permite demostrar:
 
-* Gestión de barrios y viviendas.
-* Gestión de usuarios del sistema.
-* Registro de propietarios, administradores, técnicos y personal de seguridad.
-* Gestión de visitantes como entidades del dominio.
-* Autorización de visitas.
+* Gestión de múltiples barrios.
+* Separación de datos por barrio.
+* Usuarios con roles básicos.
+* Viviendas asociadas a propietarios.
+* Visitantes y autorizaciones de visita.
 * Registro de ingresos y egresos.
-* Gestión de amenidades.
-* Reserva de amenidades.
-* Registro y seguimiento de reclamos.
-* Registro y seguimiento de incidentes.
-* Publicación de novedades.
-* Registro administrativo de expensas.
+* Reservas de amenidades.
+* Reclamos con cambio de estado.
+* Incidentes.
+* Novedades.
+* Expensas administrativas.
+* Notificaciones básicas.
+* Permisos por rol mediante proxy.
 
-Las expensas se modelan únicamente como información administrativa de estado. El sistema no implementa pagos, cobranzas, facturación ni procesamiento financiero.
+Las expensas se modelan únicamente como información administrativa. No se implementan pagos, cobranzas, facturación ni procesamiento financiero.
 
 ---
 
-## Tecnologías utilizadas
+## Tecnologías
 
-* Java 21 LTS
+* Java 21
 * Maven
-* UML
-* Patrones de diseño GoF
-* Principios SOLID
-* Patrones GRASP
-
-El proyecto no utiliza frameworks externos, base de datos ni dependencias adicionales, ya que el objetivo de esta etapa es representar el diseño orientado a objetos y las relaciones principales entre clases.
+* Java puro
+* Datos en memoria
+* Sin Spring Boot
+* Sin base de datos
+* Sin dependencias externas innecesarias
 
 ---
 
-## Arquitectura del proyecto
-
-La estructura inicial del proyecto se organiza por responsabilidad:
+## Estructura del proyecto
 
 ```text
 src/main/java/com/barrios
@@ -54,162 +53,160 @@ src/main/java/com/barrios
 └── main
 ```
 
-### `com.barrios.modelo`
+---
 
-Contiene las clases principales del dominio del sistema.
+## Paquetes principales
 
-Incluye entidades como:
+### `modelo`
 
+Contiene las entidades principales del dominio:
+
+* `Barrio`
+* `Vivienda`
 * `Usuario`
 * `Administrador`
 * `Propietario`
-* `Tecnico`
 * `PersonalSeguridad`
+* `Tecnico`
+* `Rol`
 * `Visitante`
-* `Barrio`
-* `Vivienda`
-* `Amenidad`
 * `AutorizacionVisita`
 * `RegistroAcceso`
+* `Amenidad`
 * `ReservaAmenidad`
 * `Reclamo`
 * `Incidente`
 * `Novedad`
 * `Expensa`
 
-`Usuario` se define como clase abstracta.
-`Visitante` no hereda de `Usuario`, ya que no se autentica ni opera directamente el sistema.
+`Barrio` funciona como raíz simple del enfoque multitenant: cada barrio mantiene sus propias viviendas, amenidades, visitantes, autorizaciones, accesos, reservas, reclamos, incidentes, novedades y expensas.
 
 ---
 
-### `com.barrios.servicio`
+### `servicio`
 
-Contiene las clases responsables de coordinar operaciones del sistema.
+Contiene la lógica reutilizable del sistema. Los servicios no dependen de `Scanner` ni de la consola; devuelven objetos de dominio o resultados de operación.
 
-Incluye:
+Servicios principales:
 
-* `ISistema`
-* `GestionPrincipal`
-* servicios específicos de gestión
-
-`GestionPrincipal` se modela como una fachada principal del sistema y aplica el patrón Singleton. Su responsabilidad es coordinar operaciones y delegar en servicios específicos, evitando concentrar lógica de negocio.
-
----
-
-### `com.barrios.notificacion`
-
-Contiene las interfaces y clases vinculadas al sistema de notificaciones.
-
-Se utiliza para representar el patrón Observer y desacoplar los eventos del sistema de la forma en que se notifican.
-
-Incluye:
-
-* `INotificacion`
-* `IObserver`
-* `IObservable`
+* `GestionPrincipal`: fachada principal y Singleton.
+* `GestionBarrios`: gestión de barrios, viviendas y amenidades.
+* `GestionVisitas`: autorizaciones de visita.
+* `RegistroAccesos`: ingresos y egresos.
+* `GestionReservas`: reservas de amenidades.
+* `GestionReclamos`: reclamos y avance de estado.
+* `GestionIncidentes`: registro y actualización de incidentes.
+* `GestionNovedades`: publicación de novedades.
+* `GestionExpensas`: expensas administrativas.
+* `ResumenBarrio`: resumen de datos por barrio.
+* `ResultadoOperacion`: resultado reutilizable de las operaciones del sistema.
 
 ---
 
-### `com.barrios.estado`
+### `proxy`
 
-Contiene las clases asociadas al patrón State aplicado a los reclamos.
+Contiene la implementación del patrón Proxy.
 
-Incluye:
+`SistemaProxy` aplica un proxy de protección: recibe el usuario, valida su rol y delega en `GestionPrincipal` solamente si la operación está permitida.
+
+---
+
+### `estado`
+
+Implementa el patrón State aplicado a los reclamos.
+
+Flujo de estados:
+
+```text
+PENDIENTE → EN_PROCESO → RESUELTO
+```
+
+Clases principales:
 
 * `IEstadoReclamo`
 * `EstadoPendiente`
 * `EstadoEnProceso`
 * `EstadoResuelto`
 
-Este paquete permite representar los cambios de estado de un reclamo sin concentrar la lógica en condicionales dentro de la clase principal.
+---
+
+### `notificacion`
+
+Implementa el mecanismo de notificaciones mediante Observer.
+
+Clases principales:
+
+* `IObservable`
+* `IObserver`
+* `CentroNotificaciones`
+* `HistorialNotificaciones`
+* `INotificacion`
+* `NotificacionSistema`
 
 ---
 
-### `com.barrios.factory`
+### `factory`
 
-Contiene la fábrica encargada de crear notificaciones según el tipo de evento.
-
-Incluye:
+Contiene la creación centralizada de notificaciones.
 
 * `NotificacionFactory`
 
-Este paquete representa la aplicación del patrón Factory Method o Simple Factory.
+Este componente permite crear notificaciones según el tipo de evento del sistema.
 
 ---
 
-### `com.barrios.proxy`
+### `main`
 
-Contiene la implementación del patrón Proxy.
-
-Incluye:
-
-* `SistemaProxy`
-
-El proxy controla el acceso a determinadas operaciones del sistema antes de delegarlas a la fachada principal.
+Contiene la clase `Main`, utilizada únicamente para ejecutar la demo por consola. La lógica principal se encuentra en los servicios, no en la consola.
 
 ---
 
-### `com.barrios.main`
+## Roles y permisos
 
-Contiene la clase principal de ejecución.
+### `ADMINISTRADOR`
 
-Incluye:
+Puede:
 
-* `Main`
+* Crear barrios.
+* Gestionar viviendas.
+* Gestionar amenidades.
+* Publicar novedades.
+* Registrar expensas.
+* Consultar información general.
 
-Su objetivo es validar el arranque básico del sistema y demostrar la inicialización de la estructura principal.
+### `PROPIETARIO`
 
----
+Puede:
 
-## Patrones de diseño aplicados
+* Autorizar visitas.
+* Reservar amenidades.
+* Crear reclamos.
 
-### Singleton
+### `SEGURIDAD`
 
-Aplicado en `GestionPrincipal`.
+Puede:
 
-Permite contar con una única instancia coordinadora del sistema.
+* Registrar ingresos.
+* Registrar egresos.
 
-### Facade
+### `TECNICO`
 
-Aplicado en `GestionPrincipal`.
+Puede:
 
-Permite exponer un punto de entrada simplificado a las operaciones generales del sistema.
-
-### Proxy
-
-Aplicado en `SistemaProxy`.
-
-Permite controlar permisos antes de acceder a las operaciones principales.
-
-### Factory Method / Simple Factory
-
-Aplicado en `NotificacionFactory`.
-
-Permite centralizar la creación de notificaciones según el tipo de evento.
-
-### Observer
-
-Aplicado en el mecanismo de notificaciones.
-
-Permite que determinados objetos sean notificados ante cambios relevantes, como actualizaciones de reclamos o incidentes.
-
-### State
-
-Aplicado en la gestión de estados de `Reclamo`.
-
-Permite encapsular el comportamiento de cada estado y evitar condicionales extensos.
+* Registrar incidentes.
+* Actualizar incidentes.
+* Atender reclamos.
 
 ---
 
-## Principios de diseño considerados
+## Patrones aplicados
 
-El diseño busca respetar los siguientes principios:
-
-* **SRP:** cada clase debe tener una responsabilidad principal.
-* **OCP:** el sistema puede extenderse con nuevos tipos de notificación o estados sin modificar la lógica existente.
-* **DIP:** las clases de alto nivel dependen de interfaces cuando corresponde.
-* **Bajo acoplamiento:** los servicios, notificaciones y estados se vinculan mediante abstracciones.
-* **Alta cohesión:** las clases se agrupan por responsabilidad dentro de paquetes específicos.
+* **Singleton:** `GestionPrincipal` mantiene una única instancia de la fachada principal.
+* **Facade:** `GestionPrincipal` expone un punto de entrada simplificado y delega en servicios específicos.
+* **Proxy:** `SistemaProxy` valida permisos antes de ejecutar operaciones.
+* **Factory:** `NotificacionFactory` centraliza la creación de notificaciones por tipo.
+* **Observer:** `CentroNotificaciones` notifica a observadores como `HistorialNotificaciones`.
+* **State:** `Reclamo` cambia entre `EstadoPendiente`, `EstadoEnProceso` y `EstadoResuelto`.
 
 ---
 
@@ -223,14 +220,109 @@ mvn clean compile
 
 ---
 
-## Ejecución
+## Ejecución de la demo
 
-Para ejecutar la clase principal:
+Para ejecutar la demo por consola:
 
 ```bash
 mvn exec:java
 ```
 
-La ejecución inicial solo valida el arranque básico del sistema. La lógica funcional completa será desarrollada en etapas posteriores.
+---
+
+## Flujo demostrado por la demo
+
+La clase `Main` ejecuta un flujo completo del sistema:
+
+1. Inicia el sistema.
+2. Crea los barrios `Los Robles` y `La Escondida`.
+3. Crea usuarios con roles: administrador, propietario, seguridad y técnico.
+4. Crea una vivienda y la asocia a un propietario.
+5. Crea una amenidad.
+6. Autoriza una visita en `Los Robles`.
+7. Registra ingreso y egreso del visitante.
+8. Reserva una amenidad.
+9. Crea un reclamo.
+10. Avanza el reclamo de `PENDIENTE` a `EN_PROCESO` y luego a `RESUELTO`.
+11. Genera notificaciones.
+12. Registra y actualiza un incidente.
+13. Publica una novedad.
+14. Registra una expensa administrativa.
+15. Muestra una operación rechazada por permisos.
+16. Muestra resumen por barrio.
+17. Demuestra que `La Escondida` no tiene los datos cargados en `Los Robles`.
 
 ---
+
+## Salida esperada
+
+```text
+=== SISTEMA DE GESTION DE BARRIOS PRIVADOS ===
+
+[OK] Barrio creado: Los Robles
+[OK] Barrio creado: La Escondida
+
+=== VISITAS ===
+[OK] Visita autorizada para Juan Perez en Los Robles
+[OK] Ingreso registrado correctamente
+[OK] Egreso registrado correctamente
+
+=== RECLAMOS ===
+[OK] Reclamo creado en estado PENDIENTE
+[OK] Reclamo actualizado a EN_PROCESO
+[NOTIFICACION_RECLAMO] Reclamo #1 actualizado a EN_PROCESO
+[OK] Reclamo actualizado a RESUELTO
+[NOTIFICACION_RECLAMO] Reclamo #1 actualizado a RESUELTO
+
+=== PERMISOS ===
+[DENEGADO] El usuario PROPIETARIO no puede registrar expensas
+
+=== RESUMEN POR BARRIO ===
+Los Robles:
+- Reclamos: 1
+- Reservas: 1
+- Accesos: 2
+- Incidentes: 1
+- Expensas: 1
+
+La Escondida:
+- Reclamos: 0
+- Reservas: 0
+- Accesos: 0
+- Incidentes: 0
+- Expensas: 0
+```
+
+---
+
+## Multitenancy simple
+
+El multitenancy se resuelve utilizando `Barrio` como contenedor principal de datos. Las operaciones de los servicios reciben un barrio y almacenan la información dentro de esa instancia. De esta manera, los datos de `Los Robles` no se mezclan con los datos de `La Escondida`.
+
+Esta solución es simple y funcional para la entrega final. Además, deja preparado el diseño para evolucionar posteriormente hacia una base de datos con una clave `barrioId`.
+
+---
+
+## Preparación para evolución futura
+
+El proyecto quedó organizado para poder conectarse a una API REST o a un frontend en una etapa posterior:
+
+* `Main` solo ejecuta la demo.
+* Los servicios devuelven resultados y objetos.
+* No se utiliza `Scanner`.
+* La lógica no está hardcodeada en consola.
+* Los permisos están centralizados en `SistemaProxy`.
+* Los resúmenes se devuelven como objetos mediante `ResumenBarrio`.
+
+---
+
+## Mejoras futuras
+
+* Agregar frontend con React, Vite y TypeScript.
+* Exponer una API REST con Spring Boot.
+* Persistir datos en SQLite, PostgreSQL u otra base de datos.
+* Agregar autenticación real con sesiones o JWT.
+* Incorporar tests unitarios.
+* Agregar búsquedas y filtros.
+* Mejorar validaciones de fechas, duplicados y disponibilidad de amenidades.
+* Agregar estados más completos para reservas, incidentes y expensas.

@@ -18,4 +18,9 @@ public class Propietario extends Usuario {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    @Override
+    public Rol getRol() {
+        return Rol.PROPIETARIO;
+    }
 }
