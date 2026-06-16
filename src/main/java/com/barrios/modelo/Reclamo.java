@@ -2,14 +2,21 @@ package com.barrios.modelo;
 
 import com.barrios.estado.EstadoPendiente;
 import com.barrios.estado.IEstadoReclamo;
+import com.barrios.notificacion.IObservable;
+import com.barrios.notificacion.IObserver;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Reclamo {
+public class Reclamo implements IObservable {
+
     private Long id;
     private String descripcion;
     private LocalDate fecha;
     private IEstadoReclamo estado;
+
+    private final List<IObserver> observers = new ArrayList<>();
 
     public Reclamo() {
         this.estado = new EstadoPendiente();
@@ -24,7 +31,29 @@ public class Reclamo {
 
     public void avanzarEstado() {
         estado.avanzar(this);
+        notificarObserver(this.estado.getNombre());
     }
+
+    // --- IObservable ---
+
+    @Override
+    public void agregarObserver(IObserver observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removerObserver(IObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notificarObserver(String evento) {
+        for (IObserver observer : observers) {
+            observer.actualizar(evento, this);
+        }
+    }
+
+    // --- Getters y Setters ---
 
     public Long getId() {
         return id;
