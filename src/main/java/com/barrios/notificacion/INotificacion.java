@@ -1,5 +1,15 @@
 package com.barrios.notificacion;
 
 public interface INotificacion {
-    String formatear(String mensaje);
+    default String formatear(String mensaje) {
+        return mensaje;
+    }
+
+    default String generarMensaje() {
+        return "";
+    }
+
+    default String tipo() {
+        return "SISTEMA";
+    }
 }
