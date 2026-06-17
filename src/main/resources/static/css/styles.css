@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+
 :root {
     --bg: #F6F7FB;
     --bg-soft: #EEF1F7;
@@ -19,6 +21,7 @@
     --shadow: 0 24px 70px rgba(15, 23, 42, 0.10);
     --shadow-soft: 0 12px 32px rgba(15, 23, 42, 0.08);
     --blur: blur(20px);
+    --font-sans: "Geist", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 * {
@@ -35,7 +38,7 @@ body {
         radial-gradient(circle at 86% 0%, rgba(168, 85, 247, 0.12), transparent 24rem),
         linear-gradient(135deg, var(--bg) 0%, #F9FAFB 48%, var(--bg-soft) 100%);
     color: var(--text);
-    font-family: Inter, Arial, sans-serif;
+    font-family: var(--font-sans);
     margin: 0;
     min-height: 100vh;
 }
@@ -52,11 +55,59 @@ textarea {
     font: inherit;
 }
 
+button,
+input,
+select,
+textarea,
+table,
+th,
+td,
+a,
+span,
+p,
+small,
+strong,
+label {
+    font-family: var(--font-sans);
+}
+
 h1,
 h2,
 h3,
+h4,
+h5,
 p {
     margin-top: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-sans);
+    letter-spacing: -0.035em;
+}
+
+p {
+    line-height: 1.65;
+}
+
+/* Typography refinements */
+.page-kicker,
+.badge,
+.demo-chip,
+.tenant-chip,
+.nav-item,
+.sidebar-nav a,
+label,
+th {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.btn,
+button {
+    font-weight: 650;
 }
 
 @keyframes fadeUp {
@@ -64,6 +115,7 @@ p {
         opacity: 0;
         transform: translateY(10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -73,6 +125,8 @@ p {
 .fade-up,
 .page-header,
 .executive-summary,
+.design-section,
+.design-item,
 .tenant-row,
 .module-row,
 .table-panel,
@@ -519,6 +573,81 @@ p {
 
 .inline-metrics.is-large {
     font-size: 16px;
+}
+
+.design-section {
+    margin-top: 28px;
+}
+
+.section-heading {
+    margin-bottom: 16px;
+}
+
+.section-heading h2 {
+    color: var(--text);
+    font-size: 28px;
+    font-weight: 760;
+    letter-spacing: -0.035em;
+    margin: 0;
+}
+
+.design-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.design-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    padding: 22px;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    backdrop-filter: var(--blur);
+}
+
+.design-item:hover {
+    background: var(--surface-strong);
+    border-color: var(--border-strong);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+    transform: translateY(-2px);
+}
+
+.design-item h3 {
+    font-size: 20px;
+    font-weight: 740;
+    letter-spacing: -0.02em;
+    margin: 12px 0 8px;
+}
+
+.design-item p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.scope-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 22px;
+    backdrop-filter: var(--blur);
+}
+
+.scope-list span {
+    background: var(--primary-soft);
+    border: 1px solid rgba(147, 51, 234, 0.12);
+    border-radius: 999px;
+    color: var(--primary-hover);
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 12px;
 }
 
 .tenant-list,

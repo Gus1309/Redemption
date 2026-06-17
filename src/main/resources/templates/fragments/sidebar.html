@@ -16,6 +16,9 @@
         <a th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
             <span class="nav-icon">D</span> Dashboard
         </a>
+        <a th:href="${'/diseno' + qs}" th:classappend="${active == 'diseno'} ? ' is-active'">
+            <span class="nav-icon">O</span> Diseño OO
+        </a>
         <a th:if="${rol == 'ADMINISTRADOR'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + qs : '/dashboard' + qs}"
            th:classappend="${active == 'barrios'} ? ' is-active'">

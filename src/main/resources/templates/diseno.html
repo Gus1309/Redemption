@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Diseño OO')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('diseno', null)}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Diseño OO', 'Evidencia tecnica para explicar la arquitectura, patrones y decisiones del proyecto.', null)}"></header>
+
+            <section class="executive-summary">
+                <div>
+                    <span class="eyebrow">Arquitectura</span>
+                    <h2>Controllers MVC → Servicios → Modelo de dominio</h2>
+                </div>
+                <div class="summary-line">
+                    <span>MVC con Thymeleaf</span>
+                    <span>Servicios reutilizables</span>
+                    <span>Dominio en Java puro</span>
+                </div>
+            </section>
+
+            <section class="design-section">
+                <div class="section-heading">
+                    <span class="eyebrow">GoF</span>
+                    <h2>Patrones de diseño aplicados</h2>
+                </div>
+                <div class="design-grid">
+                    <article class="design-item"><span class="badge">Singleton</span><h3>GestionPrincipal</h3><p>Centraliza una unica instancia de la fachada principal del sistema.</p></article>
+                    <article class="design-item"><span class="badge">Facade</span><h3>GestionPrincipal</h3><p>Expone operaciones de alto nivel y delega en servicios especificos.</p></article>
+                    <article class="design-item"><span class="badge">Proxy</span><h3>SistemaProxy</h3><p>Controla permisos por rol antes de invocar la logica real.</p></article>
+                    <article class="design-item"><span class="badge">Factory</span><h3>NotificacionFactory</h3><p>Crea notificaciones segun el tipo de evento del sistema.</p></article>
+                    <article class="design-item"><span class="badge">Observer</span><h3>CentroNotificaciones</h3><p>Desacopla eventos y observadores mediante IObserver e IObservable.</p></article>
+                    <article class="design-item"><span class="badge">State</span><h3>Reclamo</h3><p>Modela el avance Pendiente, EnProceso y Resuelto sin condicionales extensos.</p></article>
+                </div>
+            </section>
+
+            <section class="design-section">
+                <div class="section-heading">
+                    <span class="eyebrow">SOLID</span>
+                    <h2>Principios SOLID</h2>
+                </div>
+                <div class="table-panel">
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>Principio</th><th>Aplicacion en el proyecto</th></tr></thead>
+                            <tbody>
+                            <tr><td><span class="badge">SRP</span></td><td>Servicios separados por responsabilidad: visitas, reservas, reclamos, incidentes, novedades y expensas.</td></tr>
+                            <tr><td><span class="badge">OCP</span></td><td>Estados y notificaciones pueden extenderse agregando nuevas clases sin reescribir el flujo principal.</td></tr>
+                            <tr><td><span class="badge">LSP</span></td><td>Los roles concretos heredan de Usuario y pueden usarse donde el sistema espera un usuario.</td></tr>
+                            <tr><td><span class="badge">ISP</span></td><td>Interfaces chicas para sistema, observadores, observables, estados y notificaciones.</td></tr>
+                            <tr><td><span class="badge">DIP</span></td><td>La fachada y el proxy trabajan contra abstracciones como ISistema, IObserver e IEstadoReclamo.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section class="design-section">
+                <div class="section-heading">
+                    <span class="eyebrow">GRASP</span>
+                    <h2>Principios GRASP</h2>
+                </div>
+                <div class="module-list">
+                    <div class="module-row"><strong>Controller</strong><span>Controllers MVC reciben la navegacion y delegan en servicios.</span></div>
+                    <div class="module-row"><strong>Creator</strong><span>Servicios crean y registran entidades del flujo demo.</span></div>
+                    <div class="module-row"><strong>Information Expert</strong><span>Barrio concentra los datos propios del tenant.</span></div>
+                    <div class="module-row"><strong>Low Coupling</strong><span>Los paquetes se comunican mediante interfaces y servicios.</span></div>
+                    <div class="module-row"><strong>High Cohesion</strong><span>Cada servicio agrupa operaciones de un modulo funcional.</span></div>
+                    <div class="module-row"><strong>Polymorphism</strong><span>Estados de reclamo y roles usan comportamiento polimorfico.</span></div>
+                    <div class="module-row"><strong>Protected Variations</strong><span>State, Proxy, Factory y Observer aislan puntos de cambio.</span></div>
+                </div>
+            </section>
+
+            <section class="design-section">
+                <div class="section-heading">
+                    <span class="eyebrow">Alcance</span>
+                    <h2>Decisiones de alcance</h2>
+                </div>
+                <div class="scope-list">
+                    <span>Datos en memoria</span>
+                    <span>Sin base de datos</span>
+                    <span>Sin autenticacion real</span>
+                    <span>Expensas administrativas</span>
+                    <span>Persistencia como mejora futura</span>
+                    <span>Seguridad real como mejora futura</span>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

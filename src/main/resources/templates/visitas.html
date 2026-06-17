@@ -19,7 +19,7 @@
                 <div class="table-wrap" th:if="${!#lists.isEmpty(visitas)}">
                     <table>
                         <thead>
-                        <tr><th>Visitante</th><th>Documento</th><th>Propietario</th><th>Fecha</th><th>Estado</th></tr>
+                        <tr><th>Visitante</th><th>Documento</th><th>Propietario</th><th>Vigencia</th><th>Estado</th></tr>
                         </thead>
                         <tbody>
                         <tr th:each="visita : ${visitas}">
@@ -29,7 +29,10 @@
                             </td>
                             <td th:text="${visita.visitante.documento}">000</td>
                             <td th:text="${visita.propietario.nombre}">Propietario</td>
-                            <td th:text="${visita.fecha}">Fecha</td>
+                            <td>
+                                <div class="primary-cell" th:text="${visita.fechaDesde}">Desde</div>
+                                <div class="secondary-cell" th:text="${visita.fechaHasta != null && visita.fechaHasta != visita.fechaDesde ? 'hasta ' + visita.fechaHasta : 'un dia'}">Hasta</div>
+                            </td>
                             <td><span class="badge autorizada" th:text="${visita.estado}">Estado</span></td>
                         </tr>
                         </tbody>
