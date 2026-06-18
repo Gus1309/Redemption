@@ -11,10 +11,10 @@
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
-                        <h2>Autorizaciones</h2>
+                        <h2><i data-lucide="user-check" aria-hidden="true"></i> Autorizaciones</h2>
                         <span class="muted" th:text="${#lists.size(visitas)} + ' registros'">0 registros</span>
                     </div>
-                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                    <span class="tenant-chip"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${barrio.nombre}">Barrio</span></span>
                 </div>
                 <div class="table-wrap" th:if="${!#lists.isEmpty(visitas)}">
                     <table>
@@ -39,6 +39,7 @@
                     </table>
                 </div>
                 <div class="empty-state" th:if="${#lists.isEmpty(visitas)}">
+                    <i data-lucide="user-x" aria-hidden="true"></i>
                     <strong>Sin visitas autorizadas</strong>
                     <span>Este barrio no tiene autorizaciones cargadas.</span>
                 </div>

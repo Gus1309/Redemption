@@ -9,7 +9,7 @@
             <header th:replace="~{fragments/header :: header('Expensas administrativas', 'Consulta informativa de periodos y estados administrativos.', ${barrio})}"></header>
 
             <div class="info-alert">
-                <span class="alert-mark">i</span>
+                <span class="alert-mark"><i data-lucide="info" aria-hidden="true"></i></span>
                 <div>
                     <strong>Vista administrativa.</strong>
                     <div>El sistema no procesa pagos, cobranzas ni facturacion.</div>
@@ -19,10 +19,10 @@
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
-                        <h2>Expensas</h2>
+                        <h2><i data-lucide="receipt-text" aria-hidden="true"></i> Expensas</h2>
                         <span class="muted" th:text="${#lists.size(expensas)} + ' registros administrativos'">0 registros</span>
                     </div>
-                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                    <span class="tenant-chip"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${barrio.nombre}">Barrio</span></span>
                 </div>
                 <div class="table-wrap" th:if="${!#lists.isEmpty(expensas)}">
                     <table>
@@ -42,6 +42,7 @@
                     </table>
                 </div>
                 <div class="empty-state" th:if="${#lists.isEmpty(expensas)}">
+                    <i data-lucide="receipt" aria-hidden="true"></i>
                     <strong>Sin expensas</strong>
                     <span>No hay registros administrativos cargados para este barrio.</span>
                 </div>

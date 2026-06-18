@@ -3,7 +3,7 @@
 <header class="page-header" th:fragment="header(title, subtitle, tenant)">
     <div>
         <div class="breadcrumb">
-            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/dashboard}"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a>
             <span th:if="${tenant != null}">/</span>
             <span th:if="${tenant != null}" th:text="${tenant.nombre}">Barrio</span>
         </div>
@@ -11,9 +11,15 @@
         <p th:text="${subtitle}">Subtitulo</p>
     </div>
     <div class="header-actions">
+        <a class="button secondary compact" th:if="${tenant != null}" th:href="@{/barrios/{id}(id=${tenant.id},rol=${param.rol != null ? param.rol[0] : null})}">
+            <i data-lucide="panel-left" aria-hidden="true"></i> Panel
+        </a>
+        <a class="button secondary compact" th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null})}">
+            <i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard
+        </a>
         <span class="demo-chip" th:if="${param.rol != null}" th:text="'Rol: ' + ${param.rol[0]}">Rol</span>
-        <span class="tenant-chip" th:if="${tenant != null}" th:text="'Tenant: ' + ${tenant.nombre}">Tenant</span>
-        <span class="demo-chip">Sistema demo</span>
+        <span class="tenant-chip" th:if="${tenant != null}"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${tenant.nombre}">Barrio</span></span>
+        <span class="demo-chip"><i data-lucide="database" aria-hidden="true"></i> Demo</span>
     </div>
 </header>
 </html>

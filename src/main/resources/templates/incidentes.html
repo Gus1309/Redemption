@@ -11,10 +11,10 @@
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
-                        <h2>Registro tecnico</h2>
+                        <h2><i data-lucide="wrench" aria-hidden="true"></i> Registro tecnico</h2>
                         <span class="muted" th:text="${#lists.size(incidentes)} + ' incidentes'">0 incidentes</span>
                     </div>
-                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                    <span class="tenant-chip"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${barrio.nombre}">Barrio</span></span>
                 </div>
                 <div class="table-wrap" th:if="${!#lists.isEmpty(incidentes)}">
                     <table>
@@ -38,6 +38,7 @@
                     </table>
                 </div>
                 <div class="empty-state" th:if="${#lists.isEmpty(incidentes)}">
+                    <i data-lucide="circle-check" aria-hidden="true"></i>
                     <strong>Sin incidentes</strong>
                     <span>No hay eventos tecnicos registrados para este barrio.</span>
                 </div>

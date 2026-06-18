@@ -14,35 +14,35 @@
                     <h2>Actividad operativa</h2>
                 </div>
                 <div class="inline-metrics is-large">
-                    <span><strong th:text="${resumen.reclamos}">0</strong> Reclamos</span>
-                    <span><strong th:text="${resumen.reservas}">0</strong> Reservas</span>
-                    <span><strong th:text="${resumen.accesos}">0</strong> Accesos</span>
-                    <span><strong th:text="${resumen.incidentes}">0</strong> Incidentes</span>
-                    <span><strong th:text="${resumen.expensas}">0</strong> Expensas</span>
+                    <span><i data-lucide="clipboard-list" aria-hidden="true"></i><strong th:text="${resumen.reclamos}">0</strong> Reclamos</span>
+                    <span><i data-lucide="calendar-check" aria-hidden="true"></i><strong th:text="${resumen.reservas}">0</strong> Reservas</span>
+                    <span><i data-lucide="door-open" aria-hidden="true"></i><strong th:text="${resumen.accesos}">0</strong> Accesos</span>
+                    <span><i data-lucide="wrench" aria-hidden="true"></i><strong th:text="${resumen.incidentes}">0</strong> Incidentes</span>
+                    <span><i data-lucide="receipt-text" aria-hidden="true"></i><strong th:text="${resumen.expensas}">0</strong> Expensas</span>
                 </div>
             </section>
 
             <section class="module-list">
                 <a class="module-row" th:href="@{/barrios/{id}/visitas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Visitas</strong><span>Autorizaciones vigentes</span>
+                    <span class="module-icon"><i data-lucide="user-check" aria-hidden="true"></i></span><strong>Visitas</strong><span>Autorizaciones vigentes</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/accesos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Accesos</strong><span>Ingresos y egresos registrados</span>
+                    <span class="module-icon"><i data-lucide="door-open" aria-hidden="true"></i></span><strong>Accesos</strong><span>Ingresos y egresos registrados</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Reservas</strong><span>Amenidades solicitadas</span>
+                    <span class="module-icon"><i data-lucide="calendar-check" aria-hidden="true"></i></span><strong>Reservas</strong><span>Amenidades solicitadas</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/reclamos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Reclamos</strong><span>Tablero por estado</span>
+                    <span class="module-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span><strong>Reclamos</strong><span>Tablero por estado</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Incidentes</strong><span>Eventos operativos</span>
+                    <span class="module-icon"><i data-lucide="wrench" aria-hidden="true"></i></span><strong>Incidentes</strong><span>Eventos operativos</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/novedades(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Novedades</strong><span>Comunicaciones publicadas</span>
+                    <span class="module-icon"><i data-lucide="megaphone" aria-hidden="true"></i></span><strong>Novedades</strong><span>Comunicaciones publicadas</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
                 <a class="module-row" th:href="@{/barrios/{id}/expensas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
-                    <strong>Expensas</strong><span>Informacion administrativa</span>
+                    <span class="module-icon"><i data-lucide="receipt-text" aria-hidden="true"></i></span><strong>Expensas</strong><span>Informacion administrativa</span><i data-lucide="chevron-right" aria-hidden="true"></i>
                 </a>
             </section>
         </div>

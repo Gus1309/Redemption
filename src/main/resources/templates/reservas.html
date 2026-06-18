@@ -11,10 +11,10 @@
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
-                        <h2>Reservas</h2>
+                        <h2><i data-lucide="calendar-check" aria-hidden="true"></i> Reservas</h2>
                         <span class="muted" th:text="${#lists.size(reservas)} + ' reservas'">0 reservas</span>
                     </div>
-                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                    <span class="tenant-chip"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${barrio.nombre}">Barrio</span></span>
                 </div>
                 <div class="table-wrap" th:if="${!#lists.isEmpty(reservas)}">
                     <table>
@@ -35,6 +35,7 @@
                     </table>
                 </div>
                 <div class="empty-state" th:if="${#lists.isEmpty(reservas)}">
+                    <i data-lucide="calendar-x" aria-hidden="true"></i>
                     <strong>Sin reservas</strong>
                     <span>No hay amenidades reservadas para este barrio.</span>
                 </div>
