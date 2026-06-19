@@ -9,6 +9,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entidad de dominio que representa un reclamo dentro de un barrio.
+ *
+ * Aplica el patron State para manejar su ciclo de vida
+ * PENDIENTE -> EN_PROCESO -> RESUELTO sin distribuir condicionales por el
+ * codigo. Tambien puede notificar cambios de estado mediante Observer.
+ */
 public class Reclamo implements IObservable {
 
     private Long id;

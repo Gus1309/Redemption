@@ -5,7 +5,7 @@
        th:with="rol=${param.rol != null ? param.rol[0] : 'ADMINISTRADOR'},
                 qs=${param.rol != null ? '?rol=' + param.rol[0] : ''}">
     <a class="sidebar-brand" th:href="${'/dashboard' + qs}">
-        <span class="brand-mark">BP</span>
+        <span class="brand-mark"><i data-lucide="building-2" aria-hidden="true"></i></span>
         <span>
             <strong>Barrios</strong>
             <small th:text="${rol}">Gestion privada</small>
@@ -14,55 +14,55 @@
 
     <nav class="sidebar-nav" aria-label="Navegacion principal">
         <a th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
-            <span class="nav-icon">D</span> Dashboard
+            <span class="nav-icon"><i data-lucide="layout-dashboard" aria-hidden="true"></i></span> Dashboard
         </a>
         <a th:href="${'/diseno' + qs}" th:classappend="${active == 'diseno'} ? ' is-active'">
-            <span class="nav-icon">O</span> Diseño OO
+            <span class="nav-icon"><i data-lucide="network" aria-hidden="true"></i></span> Diseño OO
         </a>
         <a th:if="${rol == 'ADMINISTRADOR'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + qs : '/dashboard' + qs}"
            th:classappend="${active == 'barrios'} ? ' is-active'">
-            <span class="nav-icon">B</span> Barrios
+            <span class="nav-icon"><i data-lucide="map" aria-hidden="true"></i></span> Barrios
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'SEGURIDAD'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/visitas' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'visitas'} ? ' is-active'">
-            <span class="nav-icon">V</span> Visitas
+            <span class="nav-icon"><i data-lucide="user-check" aria-hidden="true"></i></span> Visitas
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'SEGURIDAD'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/accesos' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'accesos'} ? ' is-active'">
-            <span class="nav-icon">A</span> Accesos
+            <span class="nav-icon"><i data-lucide="door-open" aria-hidden="true"></i></span> Accesos
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/reservas' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'reservas'} ? ' is-active'">
-            <span class="nav-icon">R</span> Reservas
+            <span class="nav-icon"><i data-lucide="calendar-check" aria-hidden="true"></i></span> Reservas
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'TECNICO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/reclamos' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'reclamos'} ? ' is-active'">
-            <span class="nav-icon">C</span> Reclamos
+            <span class="nav-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span> Reclamos
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'TECNICO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/incidentes' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'incidentes'} ? ' is-active'">
-            <span class="nav-icon">I</span> Incidentes
+            <span class="nav-icon"><i data-lucide="wrench" aria-hidden="true"></i></span> Incidentes
         </a>
         <a th:if="${rol == 'ADMINISTRADOR'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'novedades'} ? ' is-active'">
-            <span class="nav-icon">N</span> Novedades
+            <span class="nav-icon"><i data-lucide="megaphone" aria-hidden="true"></i></span> Novedades
         </a>
         <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/expensas' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'expensas'} ? ' is-active'">
-            <span class="nav-icon">E</span> Expensas
+            <span class="nav-icon"><i data-lucide="receipt-text" aria-hidden="true"></i></span> Expensas
         </a>
     </nav>
 
     <div class="sidebar-footer">
-        <span class="status-dot"></span>
+        <span class="footer-icon"><i data-lucide="database" aria-hidden="true"></i></span>
         <div>
             <strong>Acceso simulado</strong>
             <small th:text="${rol}">Datos en memoria</small>

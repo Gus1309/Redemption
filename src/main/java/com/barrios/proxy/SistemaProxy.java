@@ -18,6 +18,13 @@ import com.barrios.servicio.ResumenBarrio;
 
 import java.util.List;
 
+/**
+ * Patron Proxy de proteccion.
+ *
+ * Intercepta las operaciones del sistema para validar permisos segun el rol
+ * del usuario antes de delegar en el sistema real. En esta demo se controlan
+ * los roles ADMINISTRADOR, PROPIETARIO, SEGURIDAD y TECNICO.
+ */
 public class SistemaProxy implements ISistema {
     private ISistema sistemaReal;
 

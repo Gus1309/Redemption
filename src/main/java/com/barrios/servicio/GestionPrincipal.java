@@ -15,6 +15,14 @@ import com.barrios.notificacion.CentroNotificaciones;
 
 import java.util.List;
 
+/**
+ * Patrones Singleton y Facade.
+ *
+ * Como Singleton mantiene una unica instancia central del sistema durante la
+ * ejecucion. Como Facade ofrece una interfaz simplificada para operar sobre
+ * barrios, visitas, accesos, reservas, reclamos, incidentes, novedades y
+ * expensas, delegando cada responsabilidad en servicios especificos.
+ */
 public class GestionPrincipal implements ISistema {
     private static GestionPrincipal instancia;
     private final CentroNotificaciones centroNotificaciones;

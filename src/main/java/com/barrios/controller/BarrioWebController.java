@@ -10,6 +10,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
+/**
+ * Controller MVC para las vistas de detalle de barrio.
+ *
+ * Atiende rutas web, carga datos en el Model y retorna vistas Thymeleaf para
+ * visitas, accesos, reservas, reclamos, incidentes, novedades y expensas. La
+ * logica se mantiene liviana y delegada en servicios, preservando la
+ * separacion entre capa web, servicios y modelo de dominio.
+ */
 @Controller
 public class BarrioWebController {
     private final DatosDemoService datosDemoService;

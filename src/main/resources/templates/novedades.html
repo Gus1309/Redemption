@@ -12,12 +12,13 @@
                 <article class="feed-item" th:each="novedad : ${novedades}">
                     <time th:text="${novedad.fecha}">Fecha</time>
                     <div>
-                        <h2>Comunicado administrativo</h2>
+                        <h2><i data-lucide="megaphone" aria-hidden="true"></i> Comunicado administrativo</h2>
                         <p th:text="${novedad.descripcion}">Descripcion</p>
                     </div>
                 </article>
             </section>
             <div class="empty-state table-panel" th:if="${#lists.isEmpty(novedades)}">
+                <i data-lucide="mail-open" aria-hidden="true"></i>
                 <strong>Sin novedades</strong>
                 <span>No hay anuncios publicados para este barrio.</span>
             </div>

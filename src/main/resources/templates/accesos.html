@@ -11,10 +11,10 @@
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
-                        <h2>Movimientos</h2>
+                        <h2><i data-lucide="door-open" aria-hidden="true"></i> Movimientos</h2>
                         <span class="muted" th:text="${#lists.size(accesos)} + ' movimientos'">0 movimientos</span>
                     </div>
-                    <span class="tenant-chip" th:text="${barrio.nombre}">Barrio</span>
+                    <span class="tenant-chip"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${barrio.nombre}">Barrio</span></span>
                 </div>
                 <div class="table-wrap" th:if="${!#lists.isEmpty(accesos)}">
                     <table>
@@ -38,6 +38,7 @@
                     </table>
                 </div>
                 <div class="empty-state" th:if="${#lists.isEmpty(accesos)}">
+                    <i data-lucide="door-closed" aria-hidden="true"></i>
                     <strong>Sin accesos registrados</strong>
                     <span>No hay ingresos ni egresos para este barrio.</span>
                 </div>
