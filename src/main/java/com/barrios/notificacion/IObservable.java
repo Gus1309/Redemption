@@ -1,5 +1,12 @@
 package com.barrios.notificacion;
 
+/**
+ * Contrato del patron Observer para objetos observables.
+ *
+ * Define operaciones para registrar, eliminar y notificar observadores, de
+ * modo que los eventos se comuniquen sin depender de implementaciones
+ * concretas.
+ */
 public interface IObservable {
     default void agregarObservador(IObserver observador) {
         agregarObserver(observador);

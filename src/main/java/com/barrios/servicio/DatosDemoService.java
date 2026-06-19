@@ -23,6 +23,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio de datos demo en memoria.
+ *
+ * Inicializa barrios, usuarios, visitas, accesos, reservas, reclamos,
+ * incidentes, novedades y expensas para mostrar el flujo funcional de la
+ * aplicacion. No representa persistencia real: la decision de alcance prioriza
+ * el diseno orientado a objetos, los patrones y la separacion por capas; una
+ * base de datos queda como mejora futura.
+ */
 @Service
 public class DatosDemoService {
     private final GestionPrincipal gestionPrincipal;

@@ -5,6 +5,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+/**
+ * Controller MVC para el dashboard.
+ *
+ * Recibe la request web, carga datos en el Model y devuelve una vista
+ * Thymeleaf. La logica de negocio queda delegada en DatosDemoService para
+ * conservar la separacion entre capa web, servicios y dominio.
+ */
 @Controller
 public class DashboardController {
     private final DatosDemoService datosDemoService;
