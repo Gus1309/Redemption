@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Nueva reserva')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('reservas', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Nueva reserva', 'Reserva una amenidad del barrio para una fecha determinada.', ${barrio})}"></header>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2><i data-lucide="calendar-check" aria-hidden="true"></i> Datos de la reserva</h2>
+                        <span class="muted">Elegi la amenidad y la fecha deseada.</span>
+                    </div>
+                </div>
+
+                <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
+
+                <form th:action="@{/barrios/{id}/reservas(id=${barrio.id})}" method="post" class="login-form" style="padding: 24px;">
+                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
+
+                    <label class="select-field">
+                        <span>Amenidad</span>
+                        <select name="amenidadId" required>
+                            <option th:each="amenidad : ${amenidades}"
+                                    th:value="${amenidad.id}"
+                                    th:text="${amenidad.nombre}">Amenidad</option>
+                        </select>
+                    </label>
+
+                    <label class="select-field">
+                        <span>Fecha</span>
+                        <input type="date" name="fecha" required
+                               style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 46px; padding: 0 14px; font: inherit;">
+                    </label>
+
+                    <div class="header-actions" style="justify-content: flex-start;">
+                        <button type="submit" class="button">
+                            <i data-lucide="plus" aria-hidden="true"></i> Reservar
+                        </button>
+                        <a class="button secondary"
+                           th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>
