@@ -120,6 +120,26 @@ public class DatosDemoService {
         return sistema.registrarReclamo(propietario, barrio, reclamo);
     }
 
+    public ResultadoOperacion<Reclamo> avanzarReclamo(Barrio barrio, Long reclamoId) {
+        return barrio.getReclamos().stream()
+                .filter(reclamo -> reclamo.getId().equals(reclamoId))
+                .findFirst()
+                .map(reclamo -> sistema.avanzarReclamo(tecnico, reclamo))
+                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Reclamo inexistente"));
+    }
+
+    public ResultadoOperacion<Incidente> crearIncidente(Barrio barrio, Incidente incidente) {
+        return sistema.registrarIncidente(tecnico, barrio, incidente);
+    }
+
+    public ResultadoOperacion<Incidente> actualizarIncidente(Barrio barrio, Long incidenteId, String nuevoEstado) {
+        return barrio.getIncidentes().stream()
+                .filter(incidente -> incidente.getId().equals(incidenteId))
+                .findFirst()
+                .map(incidente -> sistema.actualizarIncidente(tecnico, incidente, nuevoEstado))
+                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Incidente inexistente"));
+    }
+
     /**
      * Crea un Visitante y su AutorizacionVisita asociada desde la interfaz
      * web, utilizando el usuario Propietario demo. La operacion pasa siempre

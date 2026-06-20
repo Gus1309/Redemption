@@ -1,6 +1,7 @@
 package com.barrios.controller;
 
 import com.barrios.modelo.Barrio;
+import com.barrios.modelo.Incidente;
 import com.barrios.modelo.Reclamo;
 import com.barrios.servicio.DatosDemoService;
 import com.barrios.servicio.ResultadoOperacion;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -46,8 +49,13 @@ public class BarrioWebController {
     }
 
     @GetMapping("/barrios/{id}/visitas/nueva")
-    public String formularioNuevaVisita(@PathVariable Long id, Model model) {
+    public String formularioNuevaVisita(@PathVariable Long id,
+                                        @RequestParam(required = false) String rol,
+                                        Model model) {
         cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/visitas" + queryRol(rol);
+        }
         return "visita-form";
     }
 
@@ -57,8 +65,12 @@ public class BarrioWebController {
                               @RequestParam String documento,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+                              @RequestParam(required = false) String rol,
                               Model model) {
         Barrio barrio = cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/visitas" + queryRol(rol);
+        }
 
         ResultadoOperacion<?> resultado = datosDemoService.crearAutorizacionVisita(
                 barrio, nombreVisitante, documento, fechaDesde, fechaHasta);
@@ -68,7 +80,7 @@ public class BarrioWebController {
             return "visita-form";
         }
 
-        return "redirect:/barrios/" + id + "/visitas";
+        return "redirect:/barrios/" + id + "/visitas" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/accesos")
@@ -96,16 +108,25 @@ public class BarrioWebController {
     }
 
     @GetMapping("/barrios/{id}/reclamos/nuevo")
-    public String formularioNuevoReclamo(@PathVariable Long id, Model model) {
+    public String formularioNuevoReclamo(@PathVariable Long id,
+                                         @RequestParam(required = false) String rol,
+                                         Model model) {
         cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
+        }
         return "reclamo-form";
     }
 
     @PostMapping("/barrios/{id}/reclamos")
     public String crearReclamo(@PathVariable Long id,
                                @RequestParam String descripcion,
+                               @RequestParam(required = false) String rol,
                                Model model) {
         Barrio barrio = cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
+        }
 
         Reclamo reclamo = new Reclamo();
         reclamo.setId(generarProximoId(barrio));
@@ -119,7 +140,26 @@ public class BarrioWebController {
             return "reclamo-form";
         }
 
-        return "redirect:/barrios/" + id + "/reclamos";
+        return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
+    }
+
+    @PostMapping("/barrios/{id}/reclamos/{reclamoId}/avanzar")
+    public String avanzarReclamo(@PathVariable Long id,
+                                 @PathVariable Long reclamoId,
+                                 @RequestParam(required = false) String rol,
+                                 Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esTecnico(rol)) {
+            return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
+        }
+
+        ResultadoOperacion<Reclamo> resultado = datosDemoService.avanzarReclamo(barrio, reclamoId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("error", resultado.getMensaje());
+        }
+
+        return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/incidentes")
@@ -127,6 +167,63 @@ public class BarrioWebController {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("incidentes", barrio.getIncidentes());
         return "incidentes";
+    }
+
+    @GetMapping("/barrios/{id}/incidentes/nuevo")
+    public String formularioNuevoIncidente(@PathVariable Long id,
+                                           @RequestParam(required = false) String rol,
+                                           Model model) {
+        cargarBarrio(id, model);
+        if (!esTecnico(rol)) {
+            return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
+        }
+        return "incidente-form";
+    }
+
+    @PostMapping("/barrios/{id}/incidentes")
+    public String crearIncidente(@PathVariable Long id,
+                                 @RequestParam String descripcion,
+                                 @RequestParam(required = false) String rol,
+                                 Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esTecnico(rol)) {
+            return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
+        }
+
+        Incidente incidente = new Incidente();
+        incidente.setId(generarProximoIdIncidente(barrio));
+        incidente.setDescripcion(descripcion);
+        incidente.setFecha(LocalDate.now());
+        incidente.setEstado("ABIERTO");
+
+        ResultadoOperacion<Incidente> resultado = datosDemoService.crearIncidente(barrio, incidente);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("error", resultado.getMensaje());
+            return "incidente-form";
+        }
+
+        return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
+    }
+
+    @PostMapping("/barrios/{id}/incidentes/{incidenteId}/estado")
+    public String actualizarIncidente(@PathVariable Long id,
+                                      @PathVariable Long incidenteId,
+                                      @RequestParam String estado,
+                                      @RequestParam(required = false) String rol,
+                                      Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esTecnico(rol)) {
+            return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
+        }
+
+        ResultadoOperacion<Incidente> resultado = datosDemoService.actualizarIncidente(barrio, incidenteId, estado);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("error", resultado.getMensaje());
+        }
+
+        return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/novedades")
@@ -158,5 +255,21 @@ public class BarrioWebController {
 
     private long generarProximoId(Barrio barrio) {
         return barrio.getReclamos().size() + 1L;
+    }
+
+    private long generarProximoIdIncidente(Barrio barrio) {
+        return barrio.getIncidentes().size() + 1L;
+    }
+
+    private String queryRol(String rol) {
+        return rol == null || rol.isBlank() ? "" : "?rol=" + UriUtils.encode(rol, StandardCharsets.UTF_8);
+    }
+
+    private boolean esPropietario(String rol) {
+        return "PROPIETARIO".equals(rol);
+    }
+
+    private boolean esTecnico(String rol) {
+        return "TECNICO".equals(rol);
     }
 }

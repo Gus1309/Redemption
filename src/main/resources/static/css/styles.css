@@ -504,6 +504,24 @@ svg {
     background: #DCEAF2;
 }
 
+.button.state-pending {
+    background: #FFF3D8;
+    color: var(--warning);
+}
+
+.button.state-pending:hover {
+    background: #F7E4B7;
+}
+
+.button.state-progress {
+    background: var(--secondary-soft);
+    color: var(--secondary);
+}
+
+.button.state-progress:hover {
+    background: #DCEAF2;
+}
+
 .button.compact {
     min-height: 34px;
     padding: 7px 10px;
