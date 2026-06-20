@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Nuevo incidente')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('incidentes', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Nuevo incidente', 'Registra un evento operativo para que mantenimiento lo atienda.', ${barrio})}"></header>
+
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2><i data-lucide="wrench" aria-hidden="true"></i> Datos del incidente</h2>
+                        <span class="muted">El perfil Seguridad registra el incidente en estado abierto.</span>
+                    </div>
+                </div>
+
+                <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
+
+                <form th:action="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}" method="post" class="login-form" style="padding: 24px;">
+                    <label class="select-field">
+                        <span>Descripcion del incidente</span>
+                        <textarea name="descripcion" rows="4" required
+                                  style="border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font: inherit; resize: vertical;"></textarea>
+                    </label>
+
+                    <div class="header-actions" style="justify-content: flex-start;">
+                        <button type="submit" class="button">
+                            <i data-lucide="plus" aria-hidden="true"></i> Crear incidente
+                        </button>
+                        <a class="button secondary"
+                           th:href="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>

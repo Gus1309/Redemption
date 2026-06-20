@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <aside class="sidebar"
        th:fragment="sidebar(active, tenant)"
-       th:with="rol=${param.rol != null ? param.rol[0] : 'ADMINISTRADOR'},
+       th:with="rol=${param.rol != null ? param.rol[0] : 'SIN_ROL'},
                 qs=${param.rol != null ? '?rol=' + param.rol[0] : ''}">
     <a class="sidebar-brand" th:href="${'/dashboard' + qs}">
         <span class="brand-mark"><i data-lucide="building-2" aria-hidden="true"></i></span>
@@ -39,18 +39,17 @@
            th:classappend="${active == 'reservas'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="calendar-check" aria-hidden="true"></i></span> Reservas
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'TECNICO'}"
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'SEGURIDAD'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/reclamos' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'reclamos'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span> Reclamos
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'TECNICO'}"
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'SEGURIDAD' || rol == 'TECNICO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/incidentes' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'incidentes'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="wrench" aria-hidden="true"></i></span> Incidentes
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR'}"
-           th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
+        <a th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'novedades'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="megaphone" aria-hidden="true"></i></span> Novedades
         </a>

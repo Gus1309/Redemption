@@ -8,6 +8,16 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Tablero de reclamos', 'Vista kanban minimalista para seguir el estado operativo de cada reclamo.', ${barrio})}"></header>
 
+            <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;">
+                <a class="button" th:if="${param.rol != null && param.rol[0] == 'PROPIETARIO'}"
+                   th:href="@{/barrios/{id}/reclamos/nuevo(id=${barrio.id},rol=${param.rol[0]})}">
+                    <i data-lucide="plus" aria-hidden="true"></i> Nuevo reclamo
+                </a>
+                <span class="demo-chip" th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}">
+                    <i data-lucide="shield-check" aria-hidden="true"></i> Seguridad atiende reclamos
+                </span>
+            </div>
+
             <section class="kanban-grid">
                 <article class="kanban-column">
                     <div class="kanban-header">
@@ -22,6 +32,13 @@
                             <span th:text="${reclamo.fecha}">Fecha</span>
                             <span class="badge pendiente">PENDIENTE</span>
                         </div>
+                        <form th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}"
+                              th:action="@{/barrios/{id}/reclamos/{reclamoId}/avanzar(id=${barrio.id},reclamoId=${reclamo.id},rol=${param.rol[0]})}"
+                              method="post" style="margin-top: 14px;">
+                            <button type="submit" class="button compact">
+                                <i data-lucide="arrow-right" aria-hidden="true"></i> Tomar reclamo
+                            </button>
+                        </form>
                     </div>
                     <div class="empty-state" th:if="${#lists.isEmpty(pendientes)}"><i data-lucide="circle-check" aria-hidden="true"></i><strong>Sin pendientes</strong><span>La columna esta limpia.</span></div>
                 </article>
@@ -39,6 +56,13 @@
                             <span th:text="${reclamo.fecha}">Fecha</span>
                             <span class="badge en-proceso">EN_PROCESO</span>
                         </div>
+                        <form th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}"
+                              th:action="@{/barrios/{id}/reclamos/{reclamoId}/avanzar(id=${barrio.id},reclamoId=${reclamo.id},rol=${param.rol[0]})}"
+                              method="post" style="margin-top: 14px;">
+                            <button type="submit" class="button compact secondary">
+                                <i data-lucide="badge-check" aria-hidden="true"></i> Marcar resuelto
+                            </button>
+                        </form>
                     </div>
                     <div class="empty-state" th:if="${#lists.isEmpty(enProceso)}"><i data-lucide="pause-circle" aria-hidden="true"></i><strong>Sin trabajo activo</strong><span>No hay reclamos en proceso.</span></div>
                 </article>

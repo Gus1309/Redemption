@@ -106,7 +106,7 @@ public class SistemaProxy implements ISistema {
 
     @Override
     public ResultadoOperacion<Incidente> registrarIncidente(Usuario usuario, Barrio barrio, Incidente incidente) {
-        if (!puede(usuario, "GESTIONAR_INCIDENTES")) {
+        if (!puede(usuario, "REGISTRAR_INCIDENTES")) {
             return denegar(usuario, "registrar incidentes");
         }
         return sistemaReal.registrarIncidente(usuario, barrio, incidente);
@@ -114,7 +114,7 @@ public class SistemaProxy implements ISistema {
 
     @Override
     public ResultadoOperacion<Incidente> actualizarIncidente(Usuario usuario, Incidente incidente, String nuevoEstado) {
-        if (!puede(usuario, "GESTIONAR_INCIDENTES")) {
+        if (!puede(usuario, "ACTUALIZAR_INCIDENTES")) {
             return denegar(usuario, "actualizar incidentes");
         }
         return sistemaReal.actualizarIncidente(usuario, incidente, nuevoEstado);
@@ -163,8 +163,8 @@ public class SistemaProxy implements ISistema {
             case "CREAR_BARRIO", "GESTIONAR_VIVIENDAS", "GESTIONAR_AMENIDADES",
                     "PUBLICAR_NOVEDADES", "REGISTRAR_EXPENSAS", "CONSULTAR" -> rol == Rol.ADMINISTRADOR;
             case "AUTORIZAR_VISITAS", "RESERVAR_AMENIDADES", "CREAR_RECLAMOS" -> rol == Rol.PROPIETARIO;
-            case "REGISTRAR_ACCESOS" -> rol == Rol.SEGURIDAD;
-            case "GESTIONAR_INCIDENTES", "ATENDER_RECLAMOS" -> rol == Rol.TECNICO;
+            case "REGISTRAR_ACCESOS", "ATENDER_RECLAMOS", "REGISTRAR_INCIDENTES" -> rol == Rol.SEGURIDAD;
+            case "ACTUALIZAR_INCIDENTES" -> rol == Rol.TECNICO;
             default -> false;
         };
     }
