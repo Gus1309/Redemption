@@ -63,8 +63,14 @@ public class DatosDemoService {
 
         Vivienda vivienda = new Vivienda(1L, "Casa 15", propietario);
         Amenidad quincho = new Amenidad(1L, "Quincho", "Salon con parrilla");
+        Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina climatizada");
+        Amenidad sum = new Amenidad(3L, "SUM", "Salon de usos multiples");
+        Amenidad cancha = new Amenidad(4L, "Cancha de futbol", "Cancha de cesped sintetico");
         sistema.registrarVivienda(administrador, losRobles, vivienda);
         sistema.registrarAmenidad(administrador, losRobles, quincho);
+        sistema.registrarAmenidad(administrador, losRobles, pileta);
+        sistema.registrarAmenidad(administrador, losRobles, sum);
+        sistema.registrarAmenidad(administrador, losRobles, cancha);
 
         Visitante visitante = new Visitante(1L, "Juan Perez", "30111222");
         AutorizacionVisita autorizacion = new AutorizacionVisita(1L, visitante, propietario, LocalDate.now(), "PENDIENTE");
@@ -138,5 +144,73 @@ public class DatosDemoService {
                 proximoIdVisitante, visitante, propietario, fechaDesde, fechaHasta, "PENDIENTE");
 
         return sistema.autorizarVisita(propietario, barrio, autorizacion);
+    }
+
+    /**
+     * Registra el ingreso de un visitante autorizado, utilizando el usuario
+     * Seguridad demo. Busca la AutorizacionVisita por id dentro del barrio y
+     * la pasa por SistemaProxy, que valida el permiso REGISTRAR_ACCESOS antes
+     * de delegar en GestionPrincipal. GestionVisitas exige que la
+     * autorizacion este en estado AUTORIZADA para aceptar el ingreso.
+     */
+    public ResultadoOperacion<?> registrarIngreso(Barrio barrio, Long autorizacionId) {
+        Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
+                .filter(a -> a.getId().equals(autorizacionId))
+                .findFirst();
+
+        if (autorizacion.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la autorizacion seleccionada");
+        }
+
+        return sistema.registrarIngreso(seguridad, barrio, autorizacion.get());
+    }
+
+    /**
+     * Registra el egreso del visitante asociado a una autorizacion,
+     * utilizando el usuario Seguridad demo. Pasa siempre por SistemaProxy,
+     * que valida el permiso REGISTRAR_ACCESOS antes de delegar en
+     * GestionPrincipal.
+     */
+    public ResultadoOperacion<?> registrarEgreso(Barrio barrio, Long autorizacionId) {
+        Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
+                .filter(a -> a.getId().equals(autorizacionId))
+                .findFirst();
+
+        if (autorizacion.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la autorizacion seleccionada");
+        }
+
+        return sistema.registrarEgreso(seguridad, barrio, autorizacion.get().getVisitante());
+    }
+
+    /**
+     * Crea una reserva de amenidad desde la interfaz web utilizando el
+     * usuario Propietario demo. Busca la Amenidad por id dentro del barrio,
+     * valida que no exista ya una reserva para esa misma amenidad en la
+     * misma fecha, y pasa la operacion por SistemaProxy, que valida el
+     * permiso RESERVAR_AMENIDADES antes de delegar en GestionPrincipal.
+     */
+    public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
+        Optional<Amenidad> amenidad = barrio.getAmenidades().stream()
+                .filter(a -> a.getId().equals(amenidadId))
+                .findFirst();
+
+        if (amenidad.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la amenidad seleccionada");
+        }
+
+        boolean ocupada = barrio.getReservas().stream()
+                .anyMatch(r -> r.getAmenidad().getId().equals(amenidadId) && fecha.equals(r.getFecha()));
+
+        if (ocupada) {
+            return ResultadoOperacion.error("[ERROR] " + amenidad.get().getNombre()
+                    + " ya tiene una reserva para el " + fecha + ". Elegi otra fecha.");
+        }
+
+        long proximoId = barrio.getReservas().size() + 1L;
+        ReservaAmenidad reserva = new ReservaAmenidad(
+                proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
+
+        return sistema.registrarReserva(propietario, barrio, reserva);
     }
 }
