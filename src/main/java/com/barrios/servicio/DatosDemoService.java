@@ -23,15 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servicio de datos demo en memoria.
- *
- * Inicializa barrios, usuarios, visitas, accesos, reservas, reclamos,
- * incidentes, novedades y expensas para mostrar el flujo funcional de la
- * aplicacion. No representa persistencia real: la decision de alcance prioriza
- * el diseno orientado a objetos, los patrones y la separacion por capas; una
- * base de datos queda como mejora futura.
- */
 @Service
 public class DatosDemoService {
     private final GestionPrincipal gestionPrincipal;
@@ -63,8 +54,15 @@ public class DatosDemoService {
 
         Vivienda vivienda = new Vivienda(1L, "Casa 15", propietario);
         Amenidad quincho = new Amenidad(1L, "Quincho", "Salon con parrilla");
+        Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina climatizada");
+        Amenidad sum = new Amenidad(3L, "SUM", "Salon de usos multiples");
+        Amenidad cancha = new Amenidad(4L, "Cancha de futbol", "Cancha de cesped sintetico");
+
         sistema.registrarVivienda(administrador, losRobles, vivienda);
         sistema.registrarAmenidad(administrador, losRobles, quincho);
+        sistema.registrarAmenidad(administrador, losRobles, pileta);
+        sistema.registrarAmenidad(administrador, losRobles, sum);
+        sistema.registrarAmenidad(administrador, losRobles, cancha);
 
         Visitante visitante = new Visitante(1L, "Juan Perez", "30111222");
         AutorizacionVisita autorizacion = new AutorizacionVisita(1L, visitante, propietario, LocalDate.now(), "PENDIENTE");
@@ -111,11 +109,6 @@ public class DatosDemoService {
         return gestionPrincipal.obtenerResumenBarrio(administrador, barrio).getDato();
     }
 
-    /**
-     * Crea un reclamo desde la interfaz web utilizando el usuario Propietario
-     * demo. La operacion pasa siempre por el SistemaProxy, que valida el
-     * permiso (CREAR_RECLAMOS) antes de delegar en GestionPrincipal.
-     */
     public ResultadoOperacion<Reclamo> crearReclamo(Barrio barrio, Reclamo reclamo) {
         return sistema.registrarReclamo(propietario, barrio, reclamo);
     }
@@ -140,12 +133,6 @@ public class DatosDemoService {
                 .orElseGet(() -> ResultadoOperacion.error("[ERROR] Incidente inexistente"));
     }
 
-    /**
-     * Crea un Visitante y su AutorizacionVisita asociada desde la interfaz
-     * web, utilizando el usuario Propietario demo. La operacion pasa siempre
-     * por el SistemaProxy, que valida el permiso (AUTORIZAR_VISITAS) antes de
-     * delegar en GestionPrincipal.
-     */
     public ResultadoOperacion<AutorizacionVisita> crearAutorizacionVisita(Barrio barrio,
                                                                           String nombreVisitante,
                                                                           String documento,
@@ -158,5 +145,53 @@ public class DatosDemoService {
                 proximoIdVisitante, visitante, propietario, fechaDesde, fechaHasta, "PENDIENTE");
 
         return sistema.autorizarVisita(propietario, barrio, autorizacion);
+    }
+
+    public ResultadoOperacion<?> registrarIngreso(Barrio barrio, Long autorizacionId) {
+        Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
+                .filter(a -> a.getId().equals(autorizacionId))
+                .findFirst();
+
+        if (autorizacion.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la autorizacion seleccionada");
+        }
+
+        return sistema.registrarIngreso(seguridad, barrio, autorizacion.get());
+    }
+
+    public ResultadoOperacion<?> registrarEgreso(Barrio barrio, Long autorizacionId) {
+        Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
+                .filter(a -> a.getId().equals(autorizacionId))
+                .findFirst();
+
+        if (autorizacion.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la autorizacion seleccionada");
+        }
+
+        return sistema.registrarEgreso(seguridad, barrio, autorizacion.get().getVisitante());
+    }
+
+    public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
+        Optional<Amenidad> amenidad = barrio.getAmenidades().stream()
+                .filter(a -> a.getId().equals(amenidadId))
+                .findFirst();
+
+        if (amenidad.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro la amenidad seleccionada");
+        }
+
+        boolean ocupada = barrio.getReservas().stream()
+                .anyMatch(r -> r.getAmenidad().getId().equals(amenidadId) && fecha.equals(r.getFecha()));
+
+        if (ocupada) {
+            return ResultadoOperacion.error("[ERROR] " + amenidad.get().getNombre()
+                    + " ya tiene una reserva para el " + fecha + ". Elegi otra fecha.");
+        }
+
+        long proximoId = barrio.getReservas().size() + 1L;
+        ReservaAmenidad reserva = new ReservaAmenidad(
+                proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
+
+        return sistema.registrarReserva(propietario, barrio, reserva);
     }
 }

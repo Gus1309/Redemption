@@ -18,14 +18,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Controller MVC para las vistas de detalle de barrio.
- *
- * Atiende rutas web, carga datos en el Model y retorna vistas Thymeleaf para
- * visitas, accesos, reservas, reclamos, incidentes, novedades y expensas. La
- * logica se mantiene liviana y delegada en servicios, preservando la
- * separacion entre capa web, servicios y modelo de dominio.
- */
 @Controller
 public class BarrioWebController {
     private final DatosDemoService datosDemoService;
@@ -87,7 +79,52 @@ public class BarrioWebController {
     public String accesos(@PathVariable Long id, Model model) {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("accesos", barrio.getAccesos());
+        model.addAttribute("autorizaciones", barrio.getAutorizaciones());
         return "accesos";
+    }
+
+    @PostMapping("/barrios/{id}/accesos/ingreso")
+    public String registrarIngreso(@PathVariable Long id,
+                                   @RequestParam Long autorizacionId,
+                                   @RequestParam(required = false) String rol,
+                                   Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esSeguridad(rol)) {
+            return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
+        }
+
+        ResultadoOperacion<?> resultado = datosDemoService.registrarIngreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
+        return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
+    }
+
+    @PostMapping("/barrios/{id}/accesos/egreso")
+    public String registrarEgreso(@PathVariable Long id,
+                                  @RequestParam Long autorizacionId,
+                                  @RequestParam(required = false) String rol,
+                                  Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esSeguridad(rol)) {
+            return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
+        }
+
+        ResultadoOperacion<?> resultado = datosDemoService.registrarEgreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
+        return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/reservas")
@@ -95,6 +132,40 @@ public class BarrioWebController {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("reservas", barrio.getReservas());
         return "reservas";
+    }
+
+    @GetMapping("/barrios/{id}/reservas/nueva")
+    public String formularioNuevaReserva(@PathVariable Long id,
+                                         @RequestParam(required = false) String rol,
+                                         Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/reservas" + queryRol(rol);
+        }
+        model.addAttribute("amenidades", barrio.getAmenidades());
+        return "reserva-form";
+    }
+
+    @PostMapping("/barrios/{id}/reservas")
+    public String crearReserva(@PathVariable Long id,
+                               @RequestParam Long amenidadId,
+                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+                               @RequestParam(required = false) String rol,
+                               Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        if (!esPropietario(rol)) {
+            return "redirect:/barrios/" + id + "/reservas" + queryRol(rol);
+        }
+
+        ResultadoOperacion<?> resultado = datosDemoService.crearReserva(barrio, amenidadId, fecha);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("amenidades", barrio.getAmenidades());
+            model.addAttribute("error", resultado.getMensaje());
+            return "reserva-form";
+        }
+
+        return "redirect:/barrios/" + id + "/reservas" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/reclamos")
@@ -271,5 +342,9 @@ public class BarrioWebController {
 
     private boolean esTecnico(String rol) {
         return "TECNICO".equals(rol);
+    }
+
+    private boolean esSeguridad(String rol) {
+        return "SEGURIDAD".equals(rol);
     }
 }
