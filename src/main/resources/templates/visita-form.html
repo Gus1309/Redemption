@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Nueva visita')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('visitas', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Nueva autorizacion de visita', 'Habilita el ingreso de un visitante durante un rango de fechas.', ${barrio})}"></header>
+
+            <section class="form-card">
+                <p class="form-error" th:if="${error}" th:text="${error}">Error</p>
+
+                <form th:action="@{/barrios/{id}/visitas(id=${barrio.id})}" method="post">
+                    <label for="nombreVisitante">Nombre del visitante</label>
+                    <input type="text" id="nombreVisitante" name="nombreVisitante" required>
+
+                    <label for="documento">Documento</label>
+                    <input type="text" id="documento" name="documento" required>
+
+                    <label for="fechaDesde">Fecha desde</label>
+                    <input type="date" id="fechaDesde" name="fechaDesde" required>
+
+                    <label for="fechaHasta">Fecha hasta</label>
+                    <input type="date" id="fechaHasta" name="fechaHasta" required>
+
+                    <div class="form-actions">
+                        <a class="button secondary compact"
+                           th:href="@{/barrios/{id}/visitas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="button primary compact">
+                            <i data-lucide="plus" aria-hidden="true"></i> Autorizar visita
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>
