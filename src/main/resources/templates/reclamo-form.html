@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Nuevo reclamo')}"></head>
+<body>
+<div class="app-shell">
+    <aside th:replace="~{fragments/sidebar :: sidebar('reclamos', ${barrio})}"></aside>
+    <main class="main-pane">
+        <div class="content-wrap">
+            <header th:replace="~{fragments/header :: header('Nuevo reclamo', 'Registra un reclamo vecinal en estado Pendiente.', ${barrio})}"></header>
+
+            <section class="form-card">
+                <p class="form-error" th:if="${error}" th:text="${error}">Error</p>
+
+                <form th:action="@{/barrios/{id}/reclamos(id=${barrio.id})}" method="post">
+                    <label for="descripcion">Descripcion del reclamo</label>
+                    <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+
+                    <div class="form-actions">
+                        <a class="button secondary compact"
+                           th:href="@{/barrios/{id}/reclamos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                            Cancelar
+                        </a>
+                        <button type="submit" class="button primary compact">
+                            <i data-lucide="plus" aria-hidden="true"></i> Crear reclamo
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </main>
+</div>
+</body>
+</html>
