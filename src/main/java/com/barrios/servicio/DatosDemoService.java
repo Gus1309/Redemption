@@ -110,4 +110,33 @@ public class DatosDemoService {
     public ResumenBarrio obtenerResumen(Barrio barrio) {
         return gestionPrincipal.obtenerResumenBarrio(administrador, barrio).getDato();
     }
+
+    /**
+     * Crea un reclamo desde la interfaz web utilizando el usuario Propietario
+     * demo. La operacion pasa siempre por el SistemaProxy, que valida el
+     * permiso (CREAR_RECLAMOS) antes de delegar en GestionPrincipal.
+     */
+    public ResultadoOperacion<Reclamo> crearReclamo(Barrio barrio, Reclamo reclamo) {
+        return sistema.registrarReclamo(propietario, barrio, reclamo);
+    }
+
+    /**
+     * Crea un Visitante y su AutorizacionVisita asociada desde la interfaz
+     * web, utilizando el usuario Propietario demo. La operacion pasa siempre
+     * por el SistemaProxy, que valida el permiso (AUTORIZAR_VISITAS) antes de
+     * delegar en GestionPrincipal.
+     */
+    public ResultadoOperacion<AutorizacionVisita> crearAutorizacionVisita(Barrio barrio,
+                                                                          String nombreVisitante,
+                                                                          String documento,
+                                                                          LocalDate fechaDesde,
+                                                                          LocalDate fechaHasta) {
+        long proximoIdVisitante = barrio.getAutorizaciones().size() + 1L;
+        Visitante visitante = new Visitante(proximoIdVisitante, nombreVisitante, documento);
+
+        AutorizacionVisita autorizacion = new AutorizacionVisita(
+                proximoIdVisitante, visitante, propietario, fechaDesde, fechaHasta, "PENDIENTE");
+
+        return sistema.autorizarVisita(propietario, barrio, autorizacion);
+    }
 }

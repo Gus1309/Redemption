@@ -8,6 +8,13 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Visitas autorizadas', 'Control de visitantes habilitados para ingresar al barrio.', ${barrio})}"></header>
 
+            <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;">
+                <a class="button"
+                   th:href="@{/barrios/{id}/visitas/nueva(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <i data-lucide="plus" aria-hidden="true"></i> Nueva autorizacion
+                </a>
+            </div>
+
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
