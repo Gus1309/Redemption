@@ -23,15 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servicio de datos demo en memoria.
- *
- * Inicializa barrios, usuarios, visitas, accesos, reservas, reclamos,
- * incidentes, novedades y expensas para mostrar el flujo funcional de la
- * aplicacion. No representa persistencia real: la decision de alcance prioriza
- * el diseno orientado a objetos, los patrones y la separacion por capas; una
- * base de datos queda como mejora futura.
- */
 @Service
 public class DatosDemoService {
     private final GestionPrincipal gestionPrincipal;
@@ -66,6 +57,7 @@ public class DatosDemoService {
         Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina climatizada");
         Amenidad sum = new Amenidad(3L, "SUM", "Salon de usos multiples");
         Amenidad cancha = new Amenidad(4L, "Cancha de futbol", "Cancha de cesped sintetico");
+
         sistema.registrarVivienda(administrador, losRobles, vivienda);
         sistema.registrarAmenidad(administrador, losRobles, quincho);
         sistema.registrarAmenidad(administrador, losRobles, pileta);
@@ -117,21 +109,30 @@ public class DatosDemoService {
         return gestionPrincipal.obtenerResumenBarrio(administrador, barrio).getDato();
     }
 
-    /**
-     * Crea un reclamo desde la interfaz web utilizando el usuario Propietario
-     * demo. La operacion pasa siempre por el SistemaProxy, que valida el
-     * permiso (CREAR_RECLAMOS) antes de delegar en GestionPrincipal.
-     */
     public ResultadoOperacion<Reclamo> crearReclamo(Barrio barrio, Reclamo reclamo) {
         return sistema.registrarReclamo(propietario, barrio, reclamo);
     }
 
-    /**
-     * Crea un Visitante y su AutorizacionVisita asociada desde la interfaz
-     * web, utilizando el usuario Propietario demo. La operacion pasa siempre
-     * por el SistemaProxy, que valida el permiso (AUTORIZAR_VISITAS) antes de
-     * delegar en GestionPrincipal.
-     */
+    public ResultadoOperacion<Reclamo> avanzarReclamo(Barrio barrio, Long reclamoId) {
+        return barrio.getReclamos().stream()
+                .filter(reclamo -> reclamo.getId().equals(reclamoId))
+                .findFirst()
+                .map(reclamo -> sistema.avanzarReclamo(tecnico, reclamo))
+                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Reclamo inexistente"));
+    }
+
+    public ResultadoOperacion<Incidente> crearIncidente(Barrio barrio, Incidente incidente) {
+        return sistema.registrarIncidente(tecnico, barrio, incidente);
+    }
+
+    public ResultadoOperacion<Incidente> actualizarIncidente(Barrio barrio, Long incidenteId, String nuevoEstado) {
+        return barrio.getIncidentes().stream()
+                .filter(incidente -> incidente.getId().equals(incidenteId))
+                .findFirst()
+                .map(incidente -> sistema.actualizarIncidente(tecnico, incidente, nuevoEstado))
+                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Incidente inexistente"));
+    }
+
     public ResultadoOperacion<AutorizacionVisita> crearAutorizacionVisita(Barrio barrio,
                                                                           String nombreVisitante,
                                                                           String documento,
@@ -146,13 +147,6 @@ public class DatosDemoService {
         return sistema.autorizarVisita(propietario, barrio, autorizacion);
     }
 
-    /**
-     * Registra el ingreso de un visitante autorizado, utilizando el usuario
-     * Seguridad demo. Busca la AutorizacionVisita por id dentro del barrio y
-     * la pasa por SistemaProxy, que valida el permiso REGISTRAR_ACCESOS antes
-     * de delegar en GestionPrincipal. GestionVisitas exige que la
-     * autorizacion este en estado AUTORIZADA para aceptar el ingreso.
-     */
     public ResultadoOperacion<?> registrarIngreso(Barrio barrio, Long autorizacionId) {
         Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
                 .filter(a -> a.getId().equals(autorizacionId))
@@ -165,12 +159,6 @@ public class DatosDemoService {
         return sistema.registrarIngreso(seguridad, barrio, autorizacion.get());
     }
 
-    /**
-     * Registra el egreso del visitante asociado a una autorizacion,
-     * utilizando el usuario Seguridad demo. Pasa siempre por SistemaProxy,
-     * que valida el permiso REGISTRAR_ACCESOS antes de delegar en
-     * GestionPrincipal.
-     */
     public ResultadoOperacion<?> registrarEgreso(Barrio barrio, Long autorizacionId) {
         Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
                 .filter(a -> a.getId().equals(autorizacionId))
@@ -183,13 +171,6 @@ public class DatosDemoService {
         return sistema.registrarEgreso(seguridad, barrio, autorizacion.get().getVisitante());
     }
 
-    /**
-     * Crea una reserva de amenidad desde la interfaz web utilizando el
-     * usuario Propietario demo. Busca la Amenidad por id dentro del barrio,
-     * valida que no exista ya una reserva para esa misma amenidad en la
-     * misma fecha, y pasa la operacion por SistemaProxy, que valida el
-     * permiso RESERVAR_AMENIDADES antes de delegar en GestionPrincipal.
-     */
     public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
         Optional<Amenidad> amenidad = barrio.getAmenidades().stream()
                 .filter(a -> a.getId().equals(amenidadId))

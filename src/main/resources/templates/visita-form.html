@@ -18,8 +18,7 @@
 
                 <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
-                <form th:action="@{/barrios/{id}/visitas(id=${barrio.id})}" method="post" class="login-form" style="padding: 24px;">
-                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
+                <form th:action="@{/barrios/{id}/visitas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}" method="post" class="login-form" style="padding: 24px;">
                     <div class="role-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
                         <label class="select-field">
                             <span>Nombre del visitante</span>
