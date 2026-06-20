@@ -8,30 +8,51 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Nueva autorizacion de visita', 'Habilita el ingreso de un visitante durante un rango de fechas.', ${barrio})}"></header>
 
-            <section class="form-card">
-                <p class="form-error" th:if="${error}" th:text="${error}">Error</p>
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2><i data-lucide="user-check" aria-hidden="true"></i> Datos de la visita</h2>
+                        <span class="muted">Completa los datos del visitante y la vigencia.</span>
+                    </div>
+                </div>
 
-                <form th:action="@{/barrios/{id}/visitas(id=${barrio.id})}" method="post">
-                    <label for="nombreVisitante">Nombre del visitante</label>
-                    <input type="text" id="nombreVisitante" name="nombreVisitante" required>
+                <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
-                    <label for="documento">Documento</label>
-                    <input type="text" id="documento" name="documento" required>
+                <form th:action="@{/barrios/{id}/visitas(id=${barrio.id})}" method="post" class="login-form" style="padding: 24px;">
+                    <div class="role-grid" style="grid-template-columns: repeat(2, minmax(0, 1fr));">
+                        <label class="select-field">
+                            <span>Nombre del visitante</span>
+                            <input type="text" name="nombreVisitante" required
+                                   style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 46px; padding: 0 14px; font: inherit;">
+                        </label>
 
-                    <label for="fechaDesde">Fecha desde</label>
-                    <input type="date" id="fechaDesde" name="fechaDesde" required>
+                        <label class="select-field">
+                            <span>Documento</span>
+                            <input type="text" name="documento" required
+                                   style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 46px; padding: 0 14px; font: inherit;">
+                        </label>
 
-                    <label for="fechaHasta">Fecha hasta</label>
-                    <input type="date" id="fechaHasta" name="fechaHasta" required>
+                        <label class="select-field">
+                            <span>Fecha desde</span>
+                            <input type="date" name="fechaDesde" required
+                                   style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 46px; padding: 0 14px; font: inherit;">
+                        </label>
 
-                    <div class="form-actions">
-                        <a class="button secondary compact"
+                        <label class="select-field">
+                            <span>Fecha hasta</span>
+                            <input type="date" name="fechaHasta" required
+                                   style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 46px; padding: 0 14px; font: inherit;">
+                        </label>
+                    </div>
+
+                    <div class="header-actions" style="justify-content: flex-start;">
+                        <button type="submit" class="button">
+                            <i data-lucide="plus" aria-hidden="true"></i> Autorizar visita
+                        </button>
+                        <a class="button secondary"
                            th:href="@{/barrios/{id}/visitas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
                             Cancelar
                         </a>
-                        <button type="submit" class="button primary compact">
-                            <i data-lucide="plus" aria-hidden="true"></i> Autorizar visita
-                        </button>
                     </div>
                 </form>
             </section>

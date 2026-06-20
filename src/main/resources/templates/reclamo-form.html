@@ -8,21 +8,31 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Nuevo reclamo', 'Registra un reclamo vecinal en estado Pendiente.', ${barrio})}"></header>
 
-            <section class="form-card">
-                <p class="form-error" th:if="${error}" th:text="${error}">Error</p>
+            <section class="table-panel">
+                <div class="table-toolbar">
+                    <div>
+                        <h2><i data-lucide="clipboard-list" aria-hidden="true"></i> Datos del reclamo</h2>
+                        <span class="muted">Completa la descripcion para registrarlo.</span>
+                    </div>
+                </div>
 
-                <form th:action="@{/barrios/{id}/reclamos(id=${barrio.id})}" method="post">
-                    <label for="descripcion">Descripcion del reclamo</label>
-                    <textarea id="descripcion" name="descripcion" rows="4" required></textarea>
+                <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
-                    <div class="form-actions">
-                        <a class="button secondary compact"
+                <form th:action="@{/barrios/{id}/reclamos(id=${barrio.id})}" method="post" class="login-form" style="padding: 24px;">
+                    <label class="select-field">
+                        <span>Descripcion del reclamo</span>
+                        <textarea name="descripcion" rows="4" required
+                                  style="border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font: inherit; resize: vertical;"></textarea>
+                    </label>
+
+                    <div class="header-actions" style="justify-content: flex-start;">
+                        <button type="submit" class="button">
+                            <i data-lucide="plus" aria-hidden="true"></i> Crear reclamo
+                        </button>
+                        <a class="button secondary"
                            th:href="@{/barrios/{id}/reclamos(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
                             Cancelar
                         </a>
-                        <button type="submit" class="button primary compact">
-                            <i data-lucide="plus" aria-hidden="true"></i> Crear reclamo
-                        </button>
                     </div>
                 </form>
             </section>
