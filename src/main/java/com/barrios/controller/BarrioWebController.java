@@ -4,6 +4,7 @@ import com.barrios.modelo.Barrio;
 import com.barrios.modelo.Reclamo;
 import com.barrios.servicio.DatosDemoService;
 import com.barrios.servicio.ResultadoOperacion;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,32 @@ public class BarrioWebController {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("visitas", barrio.getAutorizaciones());
         return "visitas";
+    }
+
+    @GetMapping("/barrios/{id}/visitas/nueva")
+    public String formularioNuevaVisita(@PathVariable Long id, Model model) {
+        cargarBarrio(id, model);
+        return "visita-form";
+    }
+
+    @PostMapping("/barrios/{id}/visitas")
+    public String crearVisita(@PathVariable Long id,
+                              @RequestParam String nombreVisitante,
+                              @RequestParam String documento,
+                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
+                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+                              Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+
+        ResultadoOperacion<?> resultado = datosDemoService.crearAutorizacionVisita(
+                barrio, nombreVisitante, documento, fechaDesde, fechaHasta);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("error", resultado.getMensaje());
+            return "visita-form";
+        }
+
+        return "redirect:/barrios/" + id + "/visitas";
     }
 
     @GetMapping("/barrios/{id}/accesos")
