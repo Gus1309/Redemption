@@ -3,11 +3,15 @@ package com.barrios.controller;
 import com.barrios.modelo.Barrio;
 import com.barrios.modelo.Reclamo;
 import com.barrios.servicio.DatosDemoService;
+import com.barrios.servicio.ResultadoOperacion;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -64,6 +68,33 @@ public class BarrioWebController {
         return "reclamos";
     }
 
+    @GetMapping("/barrios/{id}/reclamos/nuevo")
+    public String formularioNuevoReclamo(@PathVariable Long id, Model model) {
+        cargarBarrio(id, model);
+        return "reclamo-form";
+    }
+
+    @PostMapping("/barrios/{id}/reclamos")
+    public String crearReclamo(@PathVariable Long id,
+                               @RequestParam String descripcion,
+                               Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+
+        Reclamo reclamo = new Reclamo();
+        reclamo.setId(generarProximoId(barrio));
+        reclamo.setDescripcion(descripcion);
+        reclamo.setFecha(LocalDate.now());
+
+        ResultadoOperacion<Reclamo> resultado = datosDemoService.crearReclamo(barrio, reclamo);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("error", resultado.getMensaje());
+            return "reclamo-form";
+        }
+
+        return "redirect:/barrios/" + id + "/reclamos";
+    }
+
     @GetMapping("/barrios/{id}/incidentes")
     public String incidentes(@PathVariable Long id, Model model) {
         Barrio barrio = cargarBarrio(id, model);
@@ -96,5 +127,9 @@ public class BarrioWebController {
         return reclamos.stream()
                 .filter(reclamo -> estado.equals(reclamo.getEstado().getNombre()))
                 .toList();
+    }
+
+    private long generarProximoId(Barrio barrio) {
+        return barrio.getReclamos().size() + 1L;
     }
 }

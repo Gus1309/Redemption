@@ -110,4 +110,13 @@ public class DatosDemoService {
     public ResumenBarrio obtenerResumen(Barrio barrio) {
         return gestionPrincipal.obtenerResumenBarrio(administrador, barrio).getDato();
     }
+
+    /**
+     * Crea un reclamo desde la interfaz web utilizando el usuario Propietario
+     * demo. La operacion pasa siempre por el SistemaProxy, que valida el
+     * permiso (CREAR_RECLAMOS) antes de delegar en GestionPrincipal.
+     */
+    public ResultadoOperacion<Reclamo> crearReclamo(Barrio barrio, Reclamo reclamo) {
+        return sistema.registrarReclamo(propietario, barrio, reclamo);
+    }
 }
