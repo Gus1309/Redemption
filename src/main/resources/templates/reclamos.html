@@ -8,6 +8,13 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Tablero de reclamos', 'Vista kanban minimalista para seguir el estado operativo de cada reclamo.', ${barrio})}"></header>
 
+            <div class="content-actions">
+                <a class="button primary compact"
+                   th:href="@{/barrios/{id}/reclamos/nuevo(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                    <i data-lucide="plus" aria-hidden="true"></i> Nuevo reclamo
+                </a>
+            </div>
+
             <section class="kanban-grid">
                 <article class="kanban-column">
                     <div class="kanban-header">
