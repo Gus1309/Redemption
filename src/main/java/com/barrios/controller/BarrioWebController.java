@@ -57,6 +57,7 @@ public class BarrioWebController {
                               @RequestParam String documento,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+                              @RequestParam(required = false) String rol,
                               Model model) {
         Barrio barrio = cargarBarrio(id, model);
 
@@ -68,14 +69,53 @@ public class BarrioWebController {
             return "visita-form";
         }
 
-        return "redirect:/barrios/" + id + "/visitas";
+        return "redirect:/barrios/" + id + "/visitas" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/accesos")
     public String accesos(@PathVariable Long id, Model model) {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("accesos", barrio.getAccesos());
+        model.addAttribute("autorizaciones", barrio.getAutorizaciones());
         return "accesos";
+    }
+
+    @PostMapping("/barrios/{id}/accesos/ingreso")
+    public String registrarIngreso(@PathVariable Long id,
+                                   @RequestParam Long autorizacionId,
+                                   @RequestParam(required = false) String rol,
+                                   Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+
+        ResultadoOperacion<?> resultado = datosDemoService.registrarIngreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
+        return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
+    }
+
+    @PostMapping("/barrios/{id}/accesos/egreso")
+    public String registrarEgreso(@PathVariable Long id,
+                                  @RequestParam Long autorizacionId,
+                                  @RequestParam(required = false) String rol,
+                                  Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+
+        ResultadoOperacion<?> resultado = datosDemoService.registrarEgreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
+        return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/reservas")
@@ -83,6 +123,32 @@ public class BarrioWebController {
         Barrio barrio = cargarBarrio(id, model);
         model.addAttribute("reservas", barrio.getReservas());
         return "reservas";
+    }
+
+    @GetMapping("/barrios/{id}/reservas/nueva")
+    public String formularioNuevaReserva(@PathVariable Long id, Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+        model.addAttribute("amenidades", barrio.getAmenidades());
+        return "reserva-form";
+    }
+
+    @PostMapping("/barrios/{id}/reservas")
+    public String crearReserva(@PathVariable Long id,
+                               @RequestParam Long amenidadId,
+                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+                               @RequestParam(required = false) String rol,
+                               Model model) {
+        Barrio barrio = cargarBarrio(id, model);
+
+        ResultadoOperacion<?> resultado = datosDemoService.crearReserva(barrio, amenidadId, fecha);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("amenidades", barrio.getAmenidades());
+            model.addAttribute("error", resultado.getMensaje());
+            return "reserva-form";
+        }
+
+        return "redirect:/barrios/" + id + "/reservas" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/reclamos")
@@ -104,6 +170,7 @@ public class BarrioWebController {
     @PostMapping("/barrios/{id}/reclamos")
     public String crearReclamo(@PathVariable Long id,
                                @RequestParam String descripcion,
+                               @RequestParam(required = false) String rol,
                                Model model) {
         Barrio barrio = cargarBarrio(id, model);
 
@@ -119,7 +186,7 @@ public class BarrioWebController {
             return "reclamo-form";
         }
 
-        return "redirect:/barrios/" + id + "/reclamos";
+        return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
     }
 
     @GetMapping("/barrios/{id}/incidentes")
@@ -158,5 +225,9 @@ public class BarrioWebController {
 
     private long generarProximoId(Barrio barrio) {
         return barrio.getReclamos().size() + 1L;
+    }
+
+    private String queryRol(String rol) {
+        return (rol != null && !rol.isBlank()) ? "?rol=" + rol : "";
     }
 }

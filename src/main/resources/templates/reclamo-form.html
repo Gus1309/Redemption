@@ -19,6 +19,7 @@
                 <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
                 <form th:action="@{/barrios/{id}/reclamos(id=${barrio.id})}" method="post" class="login-form" style="padding: 24px;">
+                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
                     <label class="select-field">
                         <span>Descripcion del reclamo</span>
                         <textarea name="descripcion" rows="4" required
