@@ -1,38 +1,44 @@
 # Redemption - Sistema de Gestion de Barrios Privados
 
-Proyecto universitario en Java para demostrar la administracion operativa de barrios privados. La version actual mantiene la demo por consola y agrega una interfaz web simple con Spring Boot + Thymeleaf.
+Proyecto universitario desarrollado en Java para demostrar la administracion operativa de barrios privados mediante una aplicacion web simple y una demo tecnica por consola.
 
-El foco principal del trabajo es mostrar diseno orientado a objetos, separacion de responsabilidades, patrones de diseno y una aplicacion web funcional con datos demo en memoria.
+El foco del proyecto esta puesto en diseno orientado a objetos, separacion de responsabilidades, aplicacion de patrones de diseno y demostracion funcional con datos en memoria. No es un sistema productivo ni pretende cubrir infraestructura real de autenticacion, persistencia o pagos.
 
-## Alcance
+## Estado del proyecto
 
-El sistema permite visualizar y demostrar:
+La aplicacion permite navegar barrios, consultar sus modulos principales y ejecutar flujos operativos segun un rol simulado:
 
-- Gestion de multiples barrios.
-- Separacion simple de datos por barrio.
-- Usuarios con roles basicos.
-- Viviendas, visitantes y autorizaciones.
+- Administracion y consulta de barrios.
+- Consulta de viviendas, lotes y amenidades precargadas.
+- Autorizacion de visitas.
 - Registro de ingresos y egresos.
-- Reservas de amenidades.
-- Reclamos con estados.
-- Incidentes.
-- Novedades.
-- Expensas administrativas.
-- Notificaciones basicas.
-- Permisos basicos mediante proxy.
+- Reservas de amenidades asociadas al propietario del lote ingresado.
+- Creacion y seguimiento de reclamos.
+- Registro y actualizacion de incidentes.
+- Consulta de novedades.
+- Consulta de expensas administrativas.
+- Notificaciones internas basicas.
+- Control de permisos mediante un proxy de dominio.
 
-Las expensas son solo administrativas. El sistema no procesa pagos, cobranzas ni facturacion.
+La informacion se guarda en memoria durante la ejecucion. Al reiniciar la aplicacion, los datos vuelven al estado inicial cargado por `DatosDemoService`.
 
-## Stack
+## Stack tecnico
 
 - Java 21
 - Maven
-- Spring Boot
+- Spring Boot 3.3.7
+- Spring Web
 - Thymeleaf
 - HTML y CSS
 - Datos en memoria
 
 No se usa base de datos, JPA, SQLite, JWT, Spring Security ni login real.
+
+## Requisitos
+
+- Java 21 instalado.
+- Maven disponible en el PATH.
+- Puerto `8080` libre para ejecutar la interfaz web.
 
 ## Como ejecutar
 
@@ -42,148 +48,291 @@ No se usa base de datos, JPA, SQLite, JWT, Spring Security ni login real.
 mvn clean compile
 ```
 
-### Interfaz web
+### Verificar build
+
+```bash
+mvn verify
+```
+
+### Ejecutar interfaz web
 
 ```bash
 mvn spring-boot:run
 ```
 
-URL principal:
+Luego abrir:
 
 ```text
 http://localhost:8080
 ```
 
-### Demo por consola
-
-La clase `Main` sigue disponible para demostrar el flujo sin interfaz web:
+### Ejecutar demo por consola
 
 ```bash
 mvn exec:java
 ```
 
-## Estructura
+La clase `com.barrios.main.Main` recorre un flujo tecnico por consola: crea usuarios, barrios, viviendas, visitas, accesos, reservas, reclamos, incidentes, novedades, expensas, notificaciones y una prueba de permiso denegado.
+
+Nota: la demo principal recomendada para la entrega es la interfaz web. La consola queda como apoyo tecnico para mostrar fachada, proxy, notificaciones y datos en memoria.
+
+## Estructura principal
 
 ```text
 src/main/java/com/barrios
 |-- BarriosApplication.java
-|-- controller      # Capa web MVC: recibe requests y devuelve vistas Thymeleaf.
-|-- estado          # Patron State para el ciclo de vida de Reclamo.
-|-- factory         # Factory para crear notificaciones.
-|-- main            # Demo por consola.
-|-- modelo          # Entidades de dominio: Barrio, Usuario, Reclamo, Reserva, etc.
-|-- notificacion    # Observer y abstracciones de notificacion.
-|-- proxy           # Proxy de proteccion por rol.
-|-- servicio        # Casos de uso y fachada principal del sistema.
+|-- controller
+|-- estado
+|-- factory
+|-- main
+|-- modelo
+|-- notificacion
+|-- proxy
+|-- servicio
 
 src/main/resources
 |-- static/css/styles.css
 |-- templates
+
+docs
+|-- Contribuciones.md
+|-- alcance.md
+|-- guia-demo.md
+
+pom.xml
+README.md
 ```
+
+## Paquetes y responsabilidades
+
+| Paquete | Responsabilidad |
+|---|---|
+| `com.barrios` | Clase de arranque Spring Boot: `BarriosApplication`. |
+| `controller` | Controladores MVC que reciben requests web, cargan el `Model` y devuelven vistas Thymeleaf. |
+| `modelo` | Entidades de dominio: barrio, usuarios, vivienda, visita, acceso, reserva, reclamo, incidente, novedad y expensa. |
+| `servicio` | Casos de uso y coordinacion de operaciones del sistema. Incluye la fachada `GestionPrincipal`. |
+| `proxy` | Proxy de proteccion por rol mediante `SistemaProxy`. |
+| `estado` | Implementacion del patron State para el ciclo de vida de `Reclamo`. |
+| `factory` | Simple Factory para crear notificaciones internas. |
+| `notificacion` | Interfaces y clases para notificaciones internas mediante Observer. |
+| `main` | Demo por consola con `Main`. |
 
 ## Arquitectura
 
-El proyecto esta organizado en capas simples:
+El sistema esta organizado en capas simples:
 
-- **Modelo de dominio**: clases que representan conceptos del negocio, como `Barrio`, `Usuario`, `Vivienda`, `Reclamo`, `Incidente`, `Expensa` y `ReservaAmenidad`.
-- **Servicios**: clases que concentran operaciones del sistema, por ejemplo `GestionBarrios`, `GestionVisitas`, `GestionReclamos`, `GestionReservas`, `GestionIncidentes` y `GestionExpensas`.
-- **Fachada principal**: `GestionPrincipal`, que ofrece un punto de entrada unico para operar con los servicios.
-- **Proxy de permisos**: `SistemaProxy`, que valida si el rol del usuario puede ejecutar una operacion antes de delegarla.
-- **Capa web MVC**: controllers Spring MVC que cargan datos en el `Model` y devuelven templates Thymeleaf.
-- **Vistas**: templates HTML en `src/main/resources/templates`.
+- **Capa web MVC**: controllers Spring MVC y templates Thymeleaf.
+- **Servicios de aplicacion**: clases `Gestion*` que encapsulan operaciones por modulo.
+- **Modelo de dominio**: entidades Java puras con atributos y relaciones principales.
+- **Fachada**: `GestionPrincipal` expone un punto de entrada unificado.
+- **Proxy**: `SistemaProxy` valida permisos antes de delegar en la fachada.
+- **Datos demo**: `DatosDemoService` inicializa informacion en memoria para la interfaz web.
 
-La aplicacion no persiste en base de datos. Los datos se inicializan en memoria desde `DatosDemoService`, lo que permite demostrar el funcionamiento completo sin agregar infraestructura externa.
+Esta separacion permite mostrar una aplicacion funcional sin incorporar infraestructura externa.
 
-## Rutas web
+## Rutas web principales
 
-Rutas principales:
+| Ruta | Vista / uso |
+|---|---|
+| `/` | Pantalla inicial con seleccion simulada de rol y, para propietario, numero de lote. |
+| `/dashboard` | Resumen general de barrios. |
+| `/diseno` | Vista de apoyo para explicar arquitectura y patrones. |
+| `/barrios/{id}` | Panel de un barrio. |
+| `/barrios/{id}/visitas` | Autorizaciones de visita. |
+| `/barrios/{id}/visitas/nueva` | Formulario de nueva autorizacion de visita. |
+| `/barrios/{id}/accesos` | Registro de ingresos y egresos. |
+| `/barrios/{id}/reservas` | Reservas de amenidades. |
+| `/barrios/{id}/reservas/nueva` | Formulario de nueva reserva. |
+| `/barrios/{id}/reclamos` | Tablero de reclamos por estado. |
+| `/barrios/{id}/reclamos/nuevo` | Formulario de nuevo reclamo. |
+| `/barrios/{id}/incidentes` | Incidentes registrados. |
+| `/barrios/{id}/incidentes/nuevo` | Formulario de nuevo incidente. |
+| `/barrios/{id}/novedades` | Novedades publicadas. |
+| `/barrios/{id}/expensas` | Expensas administrativas. |
 
-- `/`: inicio.
-- `/dashboard`: resumen de barrios.
-- `/barrios/{id}`: detalle de un barrio.
-- `/barrios/{id}/visitas`: visitas autorizadas.
-- `/barrios/{id}/accesos`: ingresos y egresos.
-- `/barrios/{id}/reservas`: reservas de amenidades.
-- `/barrios/{id}/reclamos`: reclamos agrupados por estado.
-- `/barrios/{id}/incidentes`: incidentes.
-- `/barrios/{id}/novedades`: novedades publicadas.
-- `/barrios/{id}/expensas`: expensas administrativas.
+## Roles y permisos
 
-## Datos demo
+El sistema no tiene autenticacion real. El rol se simula mediante parametros de navegacion y se valida en la capa de dominio con `SistemaProxy`.
 
-`DatosDemoService` inicializa datos en memoria para:
+| Rol | Permisos principales |
+|---|---|
+| `ADMINISTRADOR` | Crear barrios, gestionar viviendas, gestionar amenidades, publicar novedades, registrar expensas y consultar informacion general. |
+| `PROPIETARIO` | Autorizar visitas, reservar amenidades y crear reclamos. En la navegacion web puede ingresar numero de lote para asociar reservas al propietario real precargado. |
+| `SEGURIDAD` | Registrar ingresos/egresos, atender reclamos y registrar incidentes. |
+| `TECNICO` | Actualizar el estado de incidentes. |
 
-- **Los Robles**: tiene vivienda, amenidad, visita autorizada, ingreso, egreso, reserva, reclamo resuelto, incidente, novedad y expensa.
-- **La Escondida**: queda sin esos datos para demostrar que no se mezclan los datos entre barrios.
+El administrador funciona principalmente como perfil de consulta y gestion general. Las operaciones operativas quedan distribuidas entre propietario, seguridad y tecnico.
 
-Cada ruta `/barrios/{id}/...` toma el barrio como contexto y muestra solo su informacion.
+## Flujos web demostrables
 
-## Roles
+| Flujo | Rol | Descripcion |
+|---|---|---|
+| Seleccionar rol/lote | Todos | La pantalla inicial permite navegar con un rol simulado. Para propietario, permite ingresar lote. |
+| Consultar dashboard | Admin / roles habilitados | Muestra barrios y metricas generales. |
+| Autorizar visita | Propietario | Crea una autorizacion de visitante con fecha desde/hasta. |
+| Registrar ingreso o egreso | Seguridad | Registra movimientos sobre visitas autorizadas. |
+| Crear reserva | Propietario | Reserva una amenidad disponible para una fecha y la asocia al propietario del lote cuando el lote coincide con una vivienda precargada. |
+| Crear reclamo | Propietario | Registra un reclamo en estado `PENDIENTE`. |
+| Atender reclamo | Seguridad | Avanza el reclamo por el flujo `PENDIENTE -> EN_PROCESO -> RESUELTO`. |
+| Registrar incidente | Seguridad | Crea un incidente operativo en estado `ABIERTO`. |
+| Actualizar incidente | Tecnico | Cambia el estado del incidente, por ejemplo a `EN_REVISION` o `RESUELTO`. |
+| Consultar novedades | Todos / segun navegacion | Muestra comunicaciones precargadas. |
+| Consultar expensas | Admin / propietario | Muestra expensas administrativas precargadas. |
 
-El sistema usa roles simples para demostrar autorizacion mediante Proxy:
+## Datos precargados
 
-- `ADMINISTRADOR`: crea barrios, gestiona viviendas, amenidades, novedades, expensas y consulta informacion general.
-- `PROPIETARIO`: autoriza visitas, realiza reservas y crea reclamos.
-- `SEGURIDAD`: registra ingresos y egresos.
-- `TECNICO`: gestiona incidentes y atiende reclamos.
+`DatosDemoService` carga datos de ejemplo en memoria al iniciar la aplicacion web.
 
-## Patrones aplicados
+Incluye:
 
-- **Singleton**: `GestionPrincipal`.
-  Mantiene una instancia central del sistema.
+- Barrios `Los Robles` y `La Escondida`.
+- Viviendas demo en `Los Robles` con lotes `15`, `98`, `23`, `47` y `61`.
+- Propietarios demo asociados a esos lotes.
+- Amenidades demo: quincho, pileta, SUM y cancha de futbol.
+- Visitante y autorizacion de visita.
+- Ingreso y egreso registrados.
+- Reserva de amenidad.
+- Reclamo con estado avanzado.
+- Incidente en seguimiento.
+- Novedad.
+- Expensas administrativas.
 
-- **Facade**: `GestionPrincipal`.
-  Expone una interfaz simplificada para acceder a operaciones de barrios, visitas, accesos, reservas, reclamos, incidentes, novedades y expensas.
+Los datos se consultan siempre desde el contexto de un barrio (`/barrios/{id}/...`) para demostrar separacion por barrio. Las reservas pueden usar el parametro `lote` para resolver el propietario real asociado a una vivienda precargada.
 
-- **Proxy**: `SistemaProxy`.
-  Valida permisos segun rol antes de delegar la operacion al sistema real.
+## Patrones GoF aplicados
 
-- **Factory**: `NotificacionFactory`.
-  Centraliza la creacion de notificaciones y evita instanciaciones concretas dispersas.
+### Singleton
 
-- **Observer**: `CentroNotificaciones`, `IObservable`, `IObserver`.
-  Permite notificar eventos desacoplando al emisor de los receptores.
+- Clase principal: `GestionPrincipal`.
+- Implementacion: atributo estatico `instancia`, constructor privado y metodo `getInstancia()`.
+- Uso: mantener una unica instancia central de la fachada durante la ejecucion.
 
-- **State**: `Reclamo`, `IEstadoReclamo`, `EstadoPendiente`, `EstadoEnProceso`, `EstadoResuelto`.
-  Modela el flujo de un reclamo: `PENDIENTE -> EN_PROCESO -> RESUELTO`.
+### Facade
 
-## SOLID y GRASP
+- Clase principal: `GestionPrincipal`.
+- Interfaz: `ISistema`.
+- Uso: exponer una API simple para operar barrios, visitas, accesos, reservas, reclamos, incidentes, novedades y expensas.
 
-- **Responsabilidad unica**: los controllers solo atienden requests y devuelven vistas; la logica queda en servicios y modelos.
-- **Abierto/Cerrado**: las notificaciones y los estados pueden extenderse agregando nuevas clases sin concentrar toda la logica en condicionales.
-- **Inversion de dependencias**: `SistemaProxy` y `GestionPrincipal` trabajan contra la interfaz `ISistema`.
-- **Bajo acoplamiento**: Observer desacopla emisores y receptores de notificaciones.
-- **Alta cohesion**: cada paquete agrupa clases con una responsabilidad clara.
-- **Controller GRASP**: los controllers web reciben eventos del usuario y coordinan con servicios.
-- **Information Expert**: las entidades de dominio conservan la informacion propia de cada concepto del sistema.
+### Proxy
 
-## Decisiones tecnicas para defender
+- Clase principal: `SistemaProxy`.
+- Interfaz comun: `ISistema`.
+- Uso: validar permisos segun rol antes de delegar en `GestionPrincipal`.
 
-- Se eligio Java 21 y Maven por ser un stack estable para proyectos academicos Java.
-- Se uso Spring Boot para levantar una aplicacion web simple sin configuracion manual excesiva.
-- Se uso Thymeleaf porque permite renderizar vistas HTML desde el servidor de forma directa.
-- Se mantuvieron datos en memoria para priorizar el diseno OO, patrones y flujo funcional.
-- No se agrego Spring Security ni base de datos para no ampliar el alcance del trabajo.
-- La separacion por barrio se demuestra filtrando y navegando siempre desde un barrio especifico.
-- Las expensas son administrativas: no hay pagos, facturacion ni cobranzas reales.
+### Simple Factory
 
-## Guia rapida para defensa oral
+- Clase principal: `NotificacionFactory`.
+- Producto: `INotificacion`.
+- Uso: centralizar la creacion de notificaciones internas segun tipo de evento.
+- Aclaracion: no implementa canales externos como email, SMS o push.
 
-1. Mostrar `GestionPrincipal` para explicar Singleton + Facade.
-2. Mostrar `SistemaProxy` para explicar permisos por rol.
-3. Mostrar `Reclamo` y el paquete `estado` para explicar State.
-4. Mostrar `CentroNotificaciones`, `IObserver` e `IObservable` para explicar Observer.
-5. Mostrar `NotificacionFactory` para explicar Factory.
-6. Mostrar un controller, por ejemplo `BarrioWebController`, para explicar MVC.
-7. Mostrar `DatosDemoService` para explicar datos en memoria y alcance del proyecto.
-8. Ejecutar `mvn clean compile` para validar que el proyecto compila.
-9. Ejecutar `mvn spring-boot:run` y navegar a `http://localhost:8080`.
+### Observer
+
+- Clases principales: `CentroNotificaciones`, `IObservable`, `IObserver`, `HistorialNotificaciones`, `ObserverConsola`.
+- Uso: permitir que observadores reciban mensajes ante eventos internos.
+- Aclaracion: el historial de notificaciones se demuestra principalmente por consola/codigo; no hay bandeja web de notificaciones.
+
+### State
+
+- Clases principales: `Reclamo`, `IEstadoReclamo`, `EstadoPendiente`, `EstadoEnProceso`, `EstadoResuelto`.
+- Flujo real: `PENDIENTE -> EN_PROCESO -> RESUELTO`.
+- Uso: encapsular las transiciones del reclamo en clases de estado.
+
+## SOLID observado
+
+| Principio | Aplicacion en el proyecto |
+|---|---|
+| SRP | Controllers, servicios y entidades tienen responsabilidades separadas. |
+| OCP | Los estados de reclamo y las notificaciones pueden extenderse agregando implementaciones. |
+| LSP | Las subclases de `Usuario` pueden usarse donde el sistema espera un `Usuario`. |
+| ISP | Interfaces chicas para Observer, State y notificaciones; `ISistema` actua como contrato general de fachada. |
+| DIP | `SistemaProxy` depende de `ISistema`, no de una clase concreta. |
+
+## GRASP observado
+
+| Patron GRASP | Aplicacion |
+|---|---|
+| Controller | Los controllers MVC reciben la interaccion web y delegan en servicios. |
+| Creator | Servicios y controllers crean objetos necesarios para cada flujo. |
+| Information Expert | `Barrio` concentra las colecciones del barrio; `Reclamo` conoce su estado. |
+| Low Coupling | El proxy, la fachada y las interfaces reducen dependencias directas. |
+| High Cohesion | Cada servicio agrupa operaciones de un modulo funcional. |
+| Polymorphism | Estados de reclamo y roles concretos usan comportamiento polimorfico. |
+| Protected Variations | `ISistema`, State, Proxy y Observer aislan puntos de cambio. |
+
+## Tests y validacion
+
+No hay una suite de tests automatizados en `src/test/java`.
+
+La validacion actual se realiza mediante:
+
+- Compilacion con Maven.
+- Ejecucion web con datos precargados.
+- Demo por consola con `Main`.
+- Navegacion manual de flujos por rol.
+
+Comando recomendado antes de entregar:
+
+```bash
+mvn verify
+```
+
+## Evidencia recomendada para la entrega
+
+- Build exitoso (`mvn verify`).
+- Arranque de Spring Boot.
+- Pantalla inicial con seleccion de rol/lote.
+- Dashboard.
+- Visita creada por propietario.
+- Acceso registrado por seguridad.
+- Reserva creada por propietario y asociada al lote.
+- Reclamo creado por propietario.
+- Reclamo avanzado por seguridad.
+- Incidente creado por seguridad.
+- Incidente actualizado por tecnico.
+- Expensas administrativas visibles.
+- Denegacion de permisos mediante `SistemaProxy`.
+
+## Alcance y limitaciones
+
+El proyecto no incluye:
+
+- Base de datos.
+- Persistencia real.
+- Autenticacion real.
+- Spring Security.
+- JWT o tokens.
+- API REST externa.
+- Pagos, cobranzas o facturacion.
+- Deploy productivo.
+- Tests automatizados.
+
+Estas decisiones son parte del alcance academico: se priorizo el modelo de dominio, los patrones, la separacion por capas y una demo funcional simple.
+
+## Historial y aportes
+
+El historial Git muestra aportes de:
+
+- Augusto Miguez: integracion general, arquitectura, Spring Boot, frontend, flujos web por rol y resolucion de conflictos.
+- Dante Favereau: funcionalidades web de visitas, reclamos, reservas, accesos, validaciones y preservacion de contexto de navegacion.
+- Juan Cegielski: documentacion y aportes iniciales vinculados a estados, factory/notificaciones y consola.
+
+Comandos utiles para revisar aportes:
+
+```bash
+git shortlog -sn --all
+git log --oneline --author="AgusMig"
+git log --oneline --author="DanteFavereau"
+git log --oneline --author="Colocegi"
+```
 
 ## Mejoras futuras
 
 - Persistencia con base de datos.
-- API REST.
 - Autenticacion real.
 - Spring Security.
+- API REST.
 - Tests unitarios e integracion.
-- Formularios CRUD completos.
+- CRUD completo para todos los modulos.
+- Historial web de notificaciones.
+- Deploy productivo.
