@@ -39,18 +39,17 @@
            th:classappend="${active == 'reservas'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="calendar-check" aria-hidden="true"></i></span> Reservas
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'TECNICO'}"
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'PROPIETARIO' || rol == 'SEGURIDAD'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/reclamos' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'reclamos'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="clipboard-list" aria-hidden="true"></i></span> Reclamos
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'TECNICO'}"
+        <a th:if="${rol == 'ADMINISTRADOR' || rol == 'SEGURIDAD' || rol == 'TECNICO'}"
            th:href="${tenant != null ? '/barrios/' + tenant.id + '/incidentes' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'incidentes'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="wrench" aria-hidden="true"></i></span> Incidentes
         </a>
-        <a th:if="${rol == 'ADMINISTRADOR'}"
-           th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
+        <a th:href="${tenant != null ? '/barrios/' + tenant.id + '/novedades' + qs : '/dashboard' + qs}"
            th:classappend="${active == 'novedades'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="megaphone" aria-hidden="true"></i></span> Novedades
         </a>

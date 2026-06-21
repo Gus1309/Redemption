@@ -20,34 +20,33 @@
                 <div class="table-wrap" th:if="${!#lists.isEmpty(autorizaciones)}">
                     <table>
                         <thead>
-                        <tr><th>Visitante</th><th>Documento</th><th>Vigencia</th><th>Estado</th><th>Accion</th></tr>
+                        <tr><th>Visitante</th><th>Documento</th><th>Vigencia</th><th>Estado</th><th>Acciones</th></tr>
                         </thead>
                         <tbody>
                         <tr th:each="autorizacion : ${autorizaciones}">
                             <td>
                                 <div class="primary-cell" th:text="${autorizacion.visitante.nombre}">Visitante</div>
+                                <div class="secondary-cell" th:text="${autorizacion.propietario.nombre}">Propietario</div>
                             </td>
-                            <td th:text="${autorizacion.visitante.documento}">000</td>
+                            <td th:text="${autorizacion.visitante.documento}">Documento</td>
                             <td>
                                 <div class="primary-cell" th:text="${autorizacion.fechaDesde}">Desde</div>
                                 <div class="secondary-cell" th:text="'hasta ' + ${autorizacion.fechaHasta}">Hasta</div>
                             </td>
                             <td><span class="badge autorizada" th:text="${autorizacion.estado}">Estado</span></td>
                             <td>
-                                <form th:action="@{/barrios/{id}/accesos/ingreso(id=${barrio.id})}" method="post" style="display:inline;">
-                                    <input type="hidden" name="autorizacionId" th:value="${autorizacion.id}">
-                                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
-                                    <button type="submit" class="button compact">
-                                        <i data-lucide="log-in" aria-hidden="true"></i> Ingreso
-                                    </button>
-                                </form>
-                                <form th:action="@{/barrios/{id}/accesos/egreso(id=${barrio.id})}" method="post" style="display:inline;">
-                                    <input type="hidden" name="autorizacionId" th:value="${autorizacion.id}">
-                                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
-                                    <button type="submit" class="button secondary compact">
-                                        <i data-lucide="log-out" aria-hidden="true"></i> Egreso
-                                    </button>
-                                </form>
+                                <div class="header-actions" style="justify-content: flex-start;">
+                                    <form th:action="@{/barrios/{id}/accesos/{autorizacionId}/ingreso(id=${barrio.id},autorizacionId=${autorizacion.id},rol=${param.rol[0]})}" method="post">
+                                        <button type="submit" class="button compact">
+                                            <i data-lucide="log-in" aria-hidden="true"></i> Ingreso
+                                        </button>
+                                    </form>
+                                    <form th:action="@{/barrios/{id}/accesos/{autorizacionId}/egreso(id=${barrio.id},autorizacionId=${autorizacion.id},rol=${param.rol[0]})}" method="post">
+                                        <button type="submit" class="button compact secondary">
+                                            <i data-lucide="log-out" aria-hidden="true"></i> Egreso
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         </tbody>

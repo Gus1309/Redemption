@@ -1,5 +1,6 @@
 package com.barrios.controller;
 
+import com.barrios.estado.EstadoPendiente;
 import com.barrios.modelo.Barrio;
 import com.barrios.modelo.Incidente;
 import com.barrios.modelo.Reclamo;
@@ -83,9 +84,9 @@ public class BarrioWebController {
         return "accesos";
     }
 
-    @PostMapping("/barrios/{id}/accesos/ingreso")
+    @PostMapping("/barrios/{id}/accesos/{autorizacionId}/ingreso")
     public String registrarIngreso(@PathVariable Long id,
-                                   @RequestParam Long autorizacionId,
+                                   @PathVariable Long autorizacionId,
                                    @RequestParam(required = false) String rol,
                                    Model model) {
         Barrio barrio = cargarBarrio(id, model);
@@ -105,9 +106,9 @@ public class BarrioWebController {
         return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
     }
 
-    @PostMapping("/barrios/{id}/accesos/egreso")
+    @PostMapping("/barrios/{id}/accesos/{autorizacionId}/egreso")
     public String registrarEgreso(@PathVariable Long id,
-                                  @RequestParam Long autorizacionId,
+                                  @PathVariable Long autorizacionId,
                                   @RequestParam(required = false) String rol,
                                   Model model) {
         Barrio barrio = cargarBarrio(id, model);
@@ -199,11 +200,7 @@ public class BarrioWebController {
             return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
         }
 
-        Reclamo reclamo = new Reclamo();
-        reclamo.setId(generarProximoId(barrio));
-        reclamo.setDescripcion(descripcion);
-        reclamo.setFecha(LocalDate.now());
-
+        Reclamo reclamo = new Reclamo(generarProximoIdReclamo(barrio), descripcion, LocalDate.now(), new EstadoPendiente());
         ResultadoOperacion<Reclamo> resultado = datosDemoService.crearReclamo(barrio, reclamo);
 
         if (!resultado.isExitoso()) {
@@ -220,16 +217,11 @@ public class BarrioWebController {
                                  @RequestParam(required = false) String rol,
                                  Model model) {
         Barrio barrio = cargarBarrio(id, model);
-        if (!esTecnico(rol)) {
+        if (!esSeguridad(rol)) {
             return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
         }
 
-        ResultadoOperacion<Reclamo> resultado = datosDemoService.avanzarReclamo(barrio, reclamoId);
-
-        if (!resultado.isExitoso()) {
-            model.addAttribute("error", resultado.getMensaje());
-        }
-
+        datosDemoService.avanzarReclamo(barrio, reclamoId);
         return "redirect:/barrios/" + id + "/reclamos" + queryRol(rol);
     }
 
@@ -245,7 +237,7 @@ public class BarrioWebController {
                                            @RequestParam(required = false) String rol,
                                            Model model) {
         cargarBarrio(id, model);
-        if (!esTecnico(rol)) {
+        if (!esSeguridad(rol)) {
             return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
         }
         return "incidente-form";
@@ -257,16 +249,11 @@ public class BarrioWebController {
                                  @RequestParam(required = false) String rol,
                                  Model model) {
         Barrio barrio = cargarBarrio(id, model);
-        if (!esTecnico(rol)) {
+        if (!esSeguridad(rol)) {
             return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
         }
 
-        Incidente incidente = new Incidente();
-        incidente.setId(generarProximoIdIncidente(barrio));
-        incidente.setDescripcion(descripcion);
-        incidente.setFecha(LocalDate.now());
-        incidente.setEstado("ABIERTO");
-
+        Incidente incidente = new Incidente(generarProximoIdIncidente(barrio), descripcion, LocalDate.now(), "ABIERTO");
         ResultadoOperacion<Incidente> resultado = datosDemoService.crearIncidente(barrio, incidente);
 
         if (!resultado.isExitoso()) {
@@ -288,12 +275,7 @@ public class BarrioWebController {
             return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
         }
 
-        ResultadoOperacion<Incidente> resultado = datosDemoService.actualizarIncidente(barrio, incidenteId, estado);
-
-        if (!resultado.isExitoso()) {
-            model.addAttribute("error", resultado.getMensaje());
-        }
-
+        datosDemoService.actualizarIncidente(barrio, incidenteId, estado);
         return "redirect:/barrios/" + id + "/incidentes" + queryRol(rol);
     }
 
@@ -324,27 +306,36 @@ public class BarrioWebController {
                 .toList();
     }
 
-    private long generarProximoId(Barrio barrio) {
-        return barrio.getReclamos().size() + 1L;
+    private Long generarProximoIdReclamo(Barrio barrio) {
+        return barrio.getReclamos().stream()
+                .mapToLong(Reclamo::getId)
+                .max()
+                .orElse(0L) + 1L;
     }
 
-    private long generarProximoIdIncidente(Barrio barrio) {
-        return barrio.getIncidentes().size() + 1L;
+    private Long generarProximoIdIncidente(Barrio barrio) {
+        return barrio.getIncidentes().stream()
+                .mapToLong(Incidente::getId)
+                .max()
+                .orElse(0L) + 1L;
     }
 
     private String queryRol(String rol) {
-        return rol == null || rol.isBlank() ? "" : "?rol=" + UriUtils.encode(rol, StandardCharsets.UTF_8);
+        if (rol == null || rol.isBlank()) {
+            return "";
+        }
+        return "?rol=" + UriUtils.encode(rol, StandardCharsets.UTF_8);
     }
 
     private boolean esPropietario(String rol) {
         return "PROPIETARIO".equals(rol);
     }
 
-    private boolean esTecnico(String rol) {
-        return "TECNICO".equals(rol);
-    }
-
     private boolean esSeguridad(String rol) {
         return "SEGURIDAD".equals(rol);
+    }
+
+    private boolean esTecnico(String rol) {
+        return "TECNICO".equals(rol);
     }
 }

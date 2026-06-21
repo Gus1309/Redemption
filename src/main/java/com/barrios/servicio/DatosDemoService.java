@@ -75,18 +75,20 @@ public class DatosDemoService {
 
         Reclamo reclamo = new Reclamo(1L, "Luz quemada en acceso principal", LocalDate.now(), new EstadoPendiente());
         sistema.registrarReclamo(propietario, losRobles, reclamo);
-        sistema.avanzarReclamo(tecnico, reclamo);
-        sistema.avanzarReclamo(tecnico, reclamo);
+        sistema.avanzarReclamo(seguridad, reclamo);
+        sistema.avanzarReclamo(seguridad, reclamo);
 
         Incidente incidente = new Incidente(1L, "Porton de ingreso trabado", LocalDate.now(), "ABIERTO");
-        sistema.registrarIncidente(tecnico, losRobles, incidente);
+        sistema.registrarIncidente(seguridad, losRobles, incidente);
         sistema.actualizarIncidente(tecnico, incidente, "EN_REVISION");
 
         Novedad novedad = new Novedad(1L, "Corte de agua programado para el viernes", LocalDate.now());
         sistema.publicarNovedad(administrador, losRobles, novedad);
 
         Expensa expensa = new Expensa(1L, "2026-06", new BigDecimal("125000.00"), "PENDIENTE");
+        Expensa expensaEscondida = new Expensa(2L, "2026-06", new BigDecimal("98000.00"), "PAGA");
         sistema.registrarExpensa(administrador, losRobles, expensa);
+        sistema.registrarExpensa(administrador, laEscondida, expensaEscondida);
     }
 
     public List<Barrio> listarBarrios() {
@@ -114,23 +116,31 @@ public class DatosDemoService {
     }
 
     public ResultadoOperacion<Reclamo> avanzarReclamo(Barrio barrio, Long reclamoId) {
-        return barrio.getReclamos().stream()
-                .filter(reclamo -> reclamo.getId().equals(reclamoId))
-                .findFirst()
-                .map(reclamo -> sistema.avanzarReclamo(tecnico, reclamo))
-                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Reclamo inexistente"));
+        Optional<Reclamo> reclamo = barrio.getReclamos().stream()
+                .filter(item -> item.getId().equals(reclamoId))
+                .findFirst();
+
+        if (reclamo.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro el reclamo seleccionado");
+        }
+
+        return sistema.avanzarReclamo(seguridad, reclamo.get());
     }
 
     public ResultadoOperacion<Incidente> crearIncidente(Barrio barrio, Incidente incidente) {
-        return sistema.registrarIncidente(tecnico, barrio, incidente);
+        return sistema.registrarIncidente(seguridad, barrio, incidente);
     }
 
     public ResultadoOperacion<Incidente> actualizarIncidente(Barrio barrio, Long incidenteId, String nuevoEstado) {
-        return barrio.getIncidentes().stream()
-                .filter(incidente -> incidente.getId().equals(incidenteId))
-                .findFirst()
-                .map(incidente -> sistema.actualizarIncidente(tecnico, incidente, nuevoEstado))
-                .orElseGet(() -> ResultadoOperacion.error("[ERROR] Incidente inexistente"));
+        Optional<Incidente> incidente = barrio.getIncidentes().stream()
+                .filter(item -> item.getId().equals(incidenteId))
+                .findFirst();
+
+        if (incidente.isEmpty()) {
+            return ResultadoOperacion.error("[ERROR] No se encontro el incidente seleccionado");
+        }
+
+        return sistema.actualizarIncidente(tecnico, incidente.get(), nuevoEstado);
     }
 
     public ResultadoOperacion<AutorizacionVisita> crearAutorizacionVisita(Barrio barrio,
@@ -140,7 +150,6 @@ public class DatosDemoService {
                                                                           LocalDate fechaHasta) {
         long proximoIdVisitante = barrio.getAutorizaciones().size() + 1L;
         Visitante visitante = new Visitante(proximoIdVisitante, nombreVisitante, documento);
-
         AutorizacionVisita autorizacion = new AutorizacionVisita(
                 proximoIdVisitante, visitante, propietario, fechaDesde, fechaHasta, "PENDIENTE");
 
@@ -149,7 +158,7 @@ public class DatosDemoService {
 
     public ResultadoOperacion<?> registrarIngreso(Barrio barrio, Long autorizacionId) {
         Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
-                .filter(a -> a.getId().equals(autorizacionId))
+                .filter(item -> item.getId().equals(autorizacionId))
                 .findFirst();
 
         if (autorizacion.isEmpty()) {
@@ -161,7 +170,7 @@ public class DatosDemoService {
 
     public ResultadoOperacion<?> registrarEgreso(Barrio barrio, Long autorizacionId) {
         Optional<AutorizacionVisita> autorizacion = barrio.getAutorizaciones().stream()
-                .filter(a -> a.getId().equals(autorizacionId))
+                .filter(item -> item.getId().equals(autorizacionId))
                 .findFirst();
 
         if (autorizacion.isEmpty()) {
@@ -171,27 +180,29 @@ public class DatosDemoService {
         return sistema.registrarEgreso(seguridad, barrio, autorizacion.get().getVisitante());
     }
 
-    public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
+    public ResultadoOperacion<ReservaAmenidad> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
         Optional<Amenidad> amenidad = barrio.getAmenidades().stream()
-                .filter(a -> a.getId().equals(amenidadId))
+                .filter(item -> item.getId().equals(amenidadId))
                 .findFirst();
 
         if (amenidad.isEmpty()) {
             return ResultadoOperacion.error("[ERROR] No se encontro la amenidad seleccionada");
         }
 
-        boolean ocupada = barrio.getReservas().stream()
-                .anyMatch(r -> r.getAmenidad().getId().equals(amenidadId) && fecha.equals(r.getFecha()));
+        boolean fechaOcupada = barrio.getReservas().stream()
+                .anyMatch(reserva -> reserva.getAmenidad().getId().equals(amenidadId)
+                        && reserva.getFecha().equals(fecha));
 
-        if (ocupada) {
-            return ResultadoOperacion.error("[ERROR] " + amenidad.get().getNombre()
-                    + " ya tiene una reserva para el " + fecha + ". Elegi otra fecha.");
+        if (fechaOcupada) {
+            return ResultadoOperacion.error("[ERROR] La amenidad ya tiene una reserva para esa fecha");
         }
 
-        long proximoId = barrio.getReservas().size() + 1L;
-        ReservaAmenidad reserva = new ReservaAmenidad(
-                proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
+        long proximoId = barrio.getReservas().stream()
+                .mapToLong(ReservaAmenidad::getId)
+                .max()
+                .orElse(0L) + 1L;
 
+        ReservaAmenidad reserva = new ReservaAmenidad(proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
         return sistema.registrarReserva(propietario, barrio, reserva);
     }
 }
