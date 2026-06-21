@@ -11,7 +11,7 @@
             <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;">
                 <a class="button"
                    th:if="${param.rol != null && param.rol[0] == 'PROPIETARIO'}"
-                   th:href="@{/barrios/{id}/visitas/nueva(id=${barrio.id},rol=${param.rol[0]})}">
+                   th:href="@{/barrios/{id}/visitas/nueva(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}">
                     <i data-lucide="plus" aria-hidden="true"></i> Nueva autorizacion
                 </a>
             </div>

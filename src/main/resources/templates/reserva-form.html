@@ -18,7 +18,10 @@
 
                 <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
-                <form th:action="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}" method="post" class="login-form" style="padding: 24px;">
+                <form th:action="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}" method="post" class="login-form" style="padding: 24px;">
+                    <input type="hidden" name="rol" th:value="${param.rol != null ? param.rol[0] : null}">
+                    <input type="hidden" name="lote" th:value="${param.lote != null ? param.lote[0] : null}">
+
                     <div class="role-grid">
                         <label class="select-field">
                             <span>Amenidad</span>
@@ -41,7 +44,7 @@
                             <i data-lucide="plus" aria-hidden="true"></i> Reservar
                         </button>
                         <a class="button secondary"
-                           th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                           th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}">
                             Cancelar
                         </a>
                     </div>

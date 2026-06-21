@@ -66,17 +66,45 @@
                 </select>
             </label>
 
+            <label class="select-field" id="loteField" style="display:none;">
+                <span>Numero de lote</span>
+                <input type="text" name="lote" id="lote" placeholder="Ej: 15">
+            </label>
+
             <button class="button login-submit" type="submit"><i data-lucide="log-in" aria-hidden="true"></i> Ingresar al panel</button>
         </form>
     </section>
 </main>
 
 <script>
+    const roleInputs = document.querySelectorAll('input[name="rol"]');
+    const loteField = document.getElementById("loteField");
+
+    function actualizarCampoLote() {
+        const rolSeleccionado = document.querySelector('input[name="rol"]:checked').value;
+        const esPropietario = rolSeleccionado === "PROPIETARIO";
+        loteField.style.display = esPropietario ? "grid" : "none";
+        document.getElementById("lote").required = esPropietario;
+        if (!esPropietario) {
+            document.getElementById("lote").value = "";
+        }
+    }
+
+    roleInputs.forEach(input => input.addEventListener("change", actualizarCampoLote));
+    actualizarCampoLote();
+
     document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
         const rol = new FormData(event.currentTarget).get("rol");
         const barrioId = document.getElementById("barrioId").value;
-        window.location.href = `/barrios/${barrioId}?rol=${encodeURIComponent(rol)}`;
+        const lote = document.getElementById("lote").value;
+
+        let url = `/barrios/${barrioId}?rol=${encodeURIComponent(rol)}`;
+        if (rol === "PROPIETARIO" && lote) {
+            url += `&lote=${encodeURIComponent(lote)}`;
+        }
+        console.log("Redirigiendo a:", url, "| rol:", rol, "| lote:", lote);
+        window.location.href = url;
     });
 </script>
 </body>

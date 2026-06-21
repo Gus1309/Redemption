@@ -3,7 +3,8 @@
 <aside class="sidebar"
        th:fragment="sidebar(active, tenant)"
        th:with="rol=${param.rol != null ? param.rol[0] : 'SIN_ROL'},
-                qs=${param.rol != null ? '?rol=' + param.rol[0] : ''}">
+                lote=${param.lote != null ? param.lote[0] : null},
+                qs=${param.rol != null ? '?rol=' + param.rol[0] + (lote != null ? '&amp;lote=' + lote : '') : ''}">
     <a class="sidebar-brand" th:href="${'/dashboard' + qs}">
         <span class="brand-mark"><i data-lucide="building-2" aria-hidden="true"></i></span>
         <span>
@@ -13,7 +14,8 @@
     </a>
 
     <nav class="sidebar-nav" aria-label="Navegacion principal">
-        <a th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
+        <a th:if="${rol != 'PROPIETARIO'}"
+           th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="layout-dashboard" aria-hidden="true"></i></span> Dashboard
         </a>
         <a th:href="${'/diseno' + qs}" th:classappend="${active == 'diseno'} ? ' is-active'">
