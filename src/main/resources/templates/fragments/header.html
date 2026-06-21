@@ -17,7 +17,11 @@
         <a class="button secondary compact" th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null})}">
             <i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard
         </a>
+        <a class="button secondary compact" th:href="@{/}">
+            <i data-lucide="log-out" aria-hidden="true"></i> Cambiar rol
+        </a>
         <span class="demo-chip" th:if="${param.rol != null}" th:text="'Rol: ' + ${param.rol[0]}">Rol</span>
+        <span class="demo-chip" th:if="${param.lote != null}" th:text="'Lote: ' + ${param.lote[0]}">Lote</span>
         <span class="tenant-chip" th:if="${tenant != null}"><i data-lucide="map-pin" aria-hidden="true"></i><span th:text="${tenant.nombre}">Barrio</span></span>
         <span class="demo-chip"><i data-lucide="database" aria-hidden="true"></i> Demo</span>
     </div>

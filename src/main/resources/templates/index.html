@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments/head :: head('Acceso')}"></head>
@@ -66,17 +67,39 @@
                 </select>
             </label>
 
+            <label class="select-field" id="loteField" style="display:none;">
+                <span>Numero de lote</span>
+                <input type="text" name="lote" id="lote" placeholder="Ej: 15">
+            </label>
+
             <button class="button login-submit" type="submit"><i data-lucide="log-in" aria-hidden="true"></i> Ingresar al panel</button>
         </form>
     </section>
 </main>
 
 <script>
+    const roleInputs = document.querySelectorAll('input[name="rol"]');
+    const loteField = document.getElementById("loteField");
+
+    function actualizarCampoLote() {
+        const rolSeleccionado = document.querySelector('input[name="rol"]:checked').value;
+        loteField.style.display = rolSeleccionado === "PROPIETARIO" ? "grid" : "none";
+    }
+
+    roleInputs.forEach(input => input.addEventListener("change", actualizarCampoLote));
+    actualizarCampoLote();
+
     document.getElementById("loginForm").addEventListener("submit", function (event) {
         event.preventDefault();
         const rol = new FormData(event.currentTarget).get("rol");
         const barrioId = document.getElementById("barrioId").value;
-        window.location.href = `/barrios/${barrioId}?rol=${encodeURIComponent(rol)}`;
+        const lote = document.getElementById("lote").value;
+
+        let url = `/barrios/${barrioId}?rol=${encodeURIComponent(rol)}`;
+        if (rol === "PROPIETARIO" && lote) {
+            url += `&lote=${encodeURIComponent(lote)}`;
+        }
+        window.location.href = url;
     });
 </script>
 </body>
