@@ -6,29 +6,19 @@
     <aside th:replace="~{fragments/sidebar :: sidebar('incidentes', ${barrio})}"></aside>
     <main class="main-pane">
         <div class="content-wrap">
-            <header th:replace="~{fragments/header :: header('Nuevo incidente', 'Registra un evento operativo para seguimiento tecnico.', ${barrio})}"></header>
+            <header th:replace="~{fragments/header :: header('Nuevo incidente', 'Registra un evento operativo para que mantenimiento lo atienda.', ${barrio})}"></header>
 
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
                         <h2><i data-lucide="wrench" aria-hidden="true"></i> Datos del incidente</h2>
-                        <span class="muted">Completa la descripcion para registrarlo en estado Abierto.</span>
+                        <span class="muted">El perfil Seguridad registra el incidente en estado abierto.</span>
                     </div>
                 </div>
 
                 <p class="muted" th:if="${error}" th:text="${error}" style="color: var(--danger); padding: 0 24px;">Error</p>
 
-                <div class="info-alert" th:if="${param.rol == null || param.rol[0] != 'TECNICO'}" style="margin: 24px;">
-                    <span class="alert-mark"><i data-lucide="info" aria-hidden="true"></i></span>
-                    <div>
-                        <strong>Accion no disponible para este rol.</strong>
-                        <div>Los incidentes operativos son registrados por el perfil tecnico.</div>
-                    </div>
-                </div>
-
-                <form th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
-                      th:action="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}"
-                      method="post" class="login-form" style="padding: 24px;">
+                <form th:action="@{/barrios/{id}/incidentes(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}" method="post" class="login-form" style="padding: 24px;">
                     <label class="select-field">
                         <span>Descripcion del incidente</span>
                         <textarea name="descripcion" rows="4" required

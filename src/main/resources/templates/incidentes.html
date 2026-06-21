@@ -9,11 +9,13 @@
             <header th:replace="~{fragments/header :: header('Incidentes', 'Eventos operativos registrados para seguimiento tecnico.', ${barrio})}"></header>
 
             <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;">
-                <a class="button"
-                   th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
-                   th:href="@{/barrios/{id}/incidentes/nuevo(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">
+                <a class="button" th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}"
+                   th:href="@{/barrios/{id}/incidentes/nuevo(id=${barrio.id},rol=${param.rol[0]})}">
                     <i data-lucide="plus" aria-hidden="true"></i> Nuevo incidente
                 </a>
+                <span class="demo-chip" th:if="${param.rol != null && param.rol[0] == 'TECNICO'}">
+                    <i data-lucide="wrench" aria-hidden="true"></i> Tecnico actualiza estados
+                </span>
             </div>
 
             <section class="table-panel">
@@ -44,20 +46,17 @@
                             <td>
                                 <form th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
                                       th:action="@{/barrios/{id}/incidentes/{incidenteId}/estado(id=${barrio.id},incidenteId=${incidente.id},rol=${param.rol[0]})}"
-                                      method="post"
-                                      class="header-actions"
-                                      style="justify-content: flex-start;">
-                                    <select name="estado"
-                                            style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 34px; padding: 0 10px;">
+                                      method="post" class="header-actions" style="justify-content: flex-start;">
+                                    <select name="estado" style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 34px; padding: 0 10px;">
                                         <option value="ABIERTO" th:selected="${incidente.estado == 'ABIERTO'}">ABIERTO</option>
                                         <option value="EN_REVISION" th:selected="${incidente.estado == 'EN_REVISION'}">EN_REVISION</option>
                                         <option value="RESUELTO" th:selected="${incidente.estado == 'RESUELTO'}">RESUELTO</option>
                                     </select>
-                                    <button type="submit" class="button compact">
-                                        <i data-lucide="save" aria-hidden="true"></i> Actualizar
+                                    <button type="submit" class="button compact secondary">
+                                        <i data-lucide="save" aria-hidden="true"></i> Guardar
                                     </button>
                                 </form>
-                                <span class="muted" th:if="${param.rol == null || param.rol[0] != 'TECNICO'}">Solo lectura</span>
+                                <span class="muted" th:unless="${param.rol != null && param.rol[0] == 'TECNICO'}">Solo lectura</span>
                             </td>
                         </tr>
                         </tbody>

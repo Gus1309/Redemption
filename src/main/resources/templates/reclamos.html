@@ -14,6 +14,9 @@
                    th:href="@{/barrios/{id}/reclamos/nuevo(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}">
                     <i data-lucide="plus" aria-hidden="true"></i> Nuevo reclamo
                 </a>
+                <span class="demo-chip" th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}">
+                    <i data-lucide="shield-check" aria-hidden="true"></i> Seguridad atiende reclamos
+                </span>
             </div>
 
             <section class="kanban-grid">
@@ -30,12 +33,11 @@
                             <span th:text="${reclamo.fecha}">Fecha</span>
                             <span class="badge pendiente">PENDIENTE</span>
                         </div>
-                        <form th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
+                        <form th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}"
                               th:action="@{/barrios/{id}/reclamos/{reclamoId}/avanzar(id=${barrio.id},reclamoId=${reclamo.id},rol=${param.rol[0]})}"
-                              method="post"
-                              style="margin-top: 14px;">
-                            <button type="submit" class="button compact state-pending">
-                                <i data-lucide="play" aria-hidden="true"></i> Tomar reclamo
+                              method="post" style="margin-top: 14px;">
+                            <button type="submit" class="button compact">
+                                <i data-lucide="arrow-right" aria-hidden="true"></i> Tomar reclamo
                             </button>
                         </form>
                     </div>
@@ -55,11 +57,10 @@
                             <span th:text="${reclamo.fecha}">Fecha</span>
                             <span class="badge en-proceso">EN_PROCESO</span>
                         </div>
-                        <form th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
+                        <form th:if="${param.rol != null && param.rol[0] == 'SEGURIDAD'}"
                               th:action="@{/barrios/{id}/reclamos/{reclamoId}/avanzar(id=${barrio.id},reclamoId=${reclamo.id},rol=${param.rol[0]})}"
-                              method="post"
-                              style="margin-top: 14px;">
-                            <button type="submit" class="button compact state-progress">
+                              method="post" style="margin-top: 14px;">
+                            <button type="submit" class="button compact secondary">
                                 <i data-lucide="badge-check" aria-hidden="true"></i> Marcar resuelto
                             </button>
                         </form>
