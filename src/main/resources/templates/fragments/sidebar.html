@@ -14,7 +14,8 @@
     </a>
 
     <nav class="sidebar-nav" aria-label="Navegacion principal">
-        <a th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
+        <a th:if="${rol != 'PROPIETARIO'}"
+           th:href="${'/dashboard' + qs}" th:classappend="${active == 'dashboard'} ? ' is-active'">
             <span class="nav-icon"><i data-lucide="layout-dashboard" aria-hidden="true"></i></span> Dashboard
         </a>
         <a th:href="${'/diseno' + qs}" th:classappend="${active == 'diseno'} ? ' is-active'">
