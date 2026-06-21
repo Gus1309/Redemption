@@ -19,14 +19,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * Controller MVC para las vistas de detalle de barrio.
- *
- * Atiende rutas web, carga datos en el Model y retorna vistas Thymeleaf para
- * visitas, accesos, reservas, reclamos, incidentes, novedades y expensas. La
- * logica se mantiene liviana y delegada en servicios, preservando la
- * separacion entre capa web, servicios y modelo de dominio.
- */
 @Controller
 public class BarrioWebController {
     private final DatosDemoService datosDemoService;
@@ -53,7 +45,7 @@ public class BarrioWebController {
     public String formularioNuevaVisita(@PathVariable Long id,
                                         @RequestParam(required = false) String rol,
                                         Model model) {
-        Barrio barrio = cargarBarrio(id, model);
+        cargarBarrio(id, model);
         if (!esPropietario(rol)) {
             return "redirect:/barrios/" + id + "/visitas" + queryRol(rol);
         }
@@ -62,11 +54,11 @@ public class BarrioWebController {
 
     @PostMapping("/barrios/{id}/visitas")
     public String crearVisita(@PathVariable Long id,
-                              @RequestParam(required = false) String rol,
                               @RequestParam String nombreVisitante,
                               @RequestParam String documento,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaDesde,
                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaHasta,
+                              @RequestParam(required = false) String rol,
                               Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esPropietario(rol)) {
@@ -75,6 +67,7 @@ public class BarrioWebController {
 
         ResultadoOperacion<?> resultado = datosDemoService.crearAutorizacionVisita(
                 barrio, nombreVisitante, documento, fechaDesde, fechaHasta);
+
         if (!resultado.isExitoso()) {
             model.addAttribute("error", resultado.getMensaje());
             return "visita-form";
@@ -101,7 +94,15 @@ public class BarrioWebController {
             return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
         }
 
-        datosDemoService.registrarIngreso(barrio, autorizacionId);
+        ResultadoOperacion<?> resultado = datosDemoService.registrarIngreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
         return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
     }
 
@@ -115,7 +116,15 @@ public class BarrioWebController {
             return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
         }
 
-        datosDemoService.registrarEgreso(barrio, autorizacionId);
+        ResultadoOperacion<?> resultado = datosDemoService.registrarEgreso(barrio, autorizacionId);
+
+        if (!resultado.isExitoso()) {
+            model.addAttribute("accesos", barrio.getAccesos());
+            model.addAttribute("autorizaciones", barrio.getAutorizaciones());
+            model.addAttribute("error", resultado.getMensaje());
+            return "accesos";
+        }
+
         return "redirect:/barrios/" + id + "/accesos" + queryRol(rol);
     }
 
@@ -140,9 +149,9 @@ public class BarrioWebController {
 
     @PostMapping("/barrios/{id}/reservas")
     public String crearReserva(@PathVariable Long id,
-                               @RequestParam(required = false) String rol,
                                @RequestParam Long amenidadId,
                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+                               @RequestParam(required = false) String rol,
                                Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esPropietario(rol)) {
@@ -150,6 +159,7 @@ public class BarrioWebController {
         }
 
         ResultadoOperacion<?> resultado = datosDemoService.crearReserva(barrio, amenidadId, fecha);
+
         if (!resultado.isExitoso()) {
             model.addAttribute("amenidades", barrio.getAmenidades());
             model.addAttribute("error", resultado.getMensaje());
@@ -182,8 +192,8 @@ public class BarrioWebController {
 
     @PostMapping("/barrios/{id}/reclamos")
     public String crearReclamo(@PathVariable Long id,
-                               @RequestParam(required = false) String rol,
                                @RequestParam String descripcion,
+                               @RequestParam(required = false) String rol,
                                Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esPropietario(rol)) {
@@ -192,6 +202,7 @@ public class BarrioWebController {
 
         Reclamo reclamo = new Reclamo(generarProximoIdReclamo(barrio), descripcion, LocalDate.now(), new EstadoPendiente());
         ResultadoOperacion<Reclamo> resultado = datosDemoService.crearReclamo(barrio, reclamo);
+
         if (!resultado.isExitoso()) {
             model.addAttribute("error", resultado.getMensaje());
             return "reclamo-form";
@@ -234,8 +245,8 @@ public class BarrioWebController {
 
     @PostMapping("/barrios/{id}/incidentes")
     public String crearIncidente(@PathVariable Long id,
-                                 @RequestParam(required = false) String rol,
                                  @RequestParam String descripcion,
+                                 @RequestParam(required = false) String rol,
                                  Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esSeguridad(rol)) {
@@ -244,6 +255,7 @@ public class BarrioWebController {
 
         Incidente incidente = new Incidente(generarProximoIdIncidente(barrio), descripcion, LocalDate.now(), "ABIERTO");
         ResultadoOperacion<Incidente> resultado = datosDemoService.crearIncidente(barrio, incidente);
+
         if (!resultado.isExitoso()) {
             model.addAttribute("error", resultado.getMensaje());
             return "incidente-form";
@@ -255,8 +267,8 @@ public class BarrioWebController {
     @PostMapping("/barrios/{id}/incidentes/{incidenteId}/estado")
     public String actualizarIncidente(@PathVariable Long id,
                                       @PathVariable Long incidenteId,
-                                      @RequestParam(required = false) String rol,
                                       @RequestParam String estado,
+                                      @RequestParam(required = false) String rol,
                                       Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esTecnico(rol)) {

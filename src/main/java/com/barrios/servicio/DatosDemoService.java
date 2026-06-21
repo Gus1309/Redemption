@@ -23,15 +23,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servicio de datos demo en memoria.
- *
- * Inicializa barrios, usuarios, visitas, accesos, reservas, reclamos,
- * incidentes, novedades y expensas para mostrar el flujo funcional de la
- * aplicacion. No representa persistencia real: la decision de alcance prioriza
- * el diseno orientado a objetos, los patrones y la separacion por capas; una
- * base de datos queda como mejora futura.
- */
 @Service
 public class DatosDemoService {
     private final GestionPrincipal gestionPrincipal;
@@ -63,9 +54,10 @@ public class DatosDemoService {
 
         Vivienda vivienda = new Vivienda(1L, "Casa 15", propietario);
         Amenidad quincho = new Amenidad(1L, "Quincho", "Salon con parrilla");
-        Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina central con guardavidas");
+        Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina climatizada");
         Amenidad sum = new Amenidad(3L, "SUM", "Salon de usos multiples");
-        Amenidad cancha = new Amenidad(4L, "Cancha de tenis", "Turnos diurnos y nocturnos");
+        Amenidad cancha = new Amenidad(4L, "Cancha de futbol", "Cancha de cesped sintetico");
+
         sistema.registrarVivienda(administrador, losRobles, vivienda);
         sistema.registrarAmenidad(administrador, losRobles, quincho);
         sistema.registrarAmenidad(administrador, losRobles, pileta);
@@ -209,6 +201,7 @@ public class DatosDemoService {
                 .mapToLong(ReservaAmenidad::getId)
                 .max()
                 .orElse(0L) + 1L;
+
         ReservaAmenidad reserva = new ReservaAmenidad(proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
         return sistema.registrarReserva(propietario, barrio, reserva);
     }

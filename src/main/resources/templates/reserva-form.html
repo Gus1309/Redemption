@@ -6,13 +6,13 @@
     <aside th:replace="~{fragments/sidebar :: sidebar('reservas', ${barrio})}"></aside>
     <main class="main-pane">
         <div class="content-wrap">
-            <header th:replace="~{fragments/header :: header('Nueva reserva', 'Solicita una amenidad disponible para una fecha.', ${barrio})}"></header>
+            <header th:replace="~{fragments/header :: header('Nueva reserva', 'Reserva una amenidad del barrio para una fecha determinada.', ${barrio})}"></header>
 
             <section class="table-panel">
                 <div class="table-toolbar">
                     <div>
                         <h2><i data-lucide="calendar-check" aria-hidden="true"></i> Datos de la reserva</h2>
-                        <span class="muted">Selecciona amenidad y fecha.</span>
+                        <span class="muted">Elegi la amenidad y la fecha deseada.</span>
                     </div>
                 </div>
 
@@ -38,7 +38,7 @@
 
                     <div class="header-actions" style="justify-content: flex-start;">
                         <button type="submit" class="button">
-                            <i data-lucide="plus" aria-hidden="true"></i> Crear reserva
+                            <i data-lucide="plus" aria-hidden="true"></i> Reservar
                         </button>
                         <a class="button secondary"
                            th:href="@{/barrios/{id}/reservas(id=${barrio.id},rol=${param.rol != null ? param.rol[0] : null})}">

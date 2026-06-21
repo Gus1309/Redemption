@@ -47,7 +47,7 @@
                                 <form th:if="${param.rol != null && param.rol[0] == 'TECNICO'}"
                                       th:action="@{/barrios/{id}/incidentes/{incidenteId}/estado(id=${barrio.id},incidenteId=${incidente.id},rol=${param.rol[0]})}"
                                       method="post" class="header-actions" style="justify-content: flex-start;">
-                                    <select name="estado" class="select-field" style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 34px; padding: 0 10px;">
+                                    <select name="estado" style="border: 1px solid var(--border); border-radius: var(--radius); min-height: 34px; padding: 0 10px;">
                                         <option value="ABIERTO" th:selected="${incidente.estado == 'ABIERTO'}">ABIERTO</option>
                                         <option value="EN_REVISION" th:selected="${incidente.estado == 'EN_REVISION'}">EN_REVISION</option>
                                         <option value="RESUELTO" th:selected="${incidente.estado == 'RESUELTO'}">RESUELTO</option>

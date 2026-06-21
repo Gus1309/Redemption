@@ -8,8 +8,9 @@
         <div class="content-wrap">
             <header th:replace="~{fragments/header :: header('Reservas de amenidades', 'Agenda de amenities solicitadas por propietarios.', ${barrio})}"></header>
 
-            <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;">
-                <a class="button" th:if="${param.rol != null && param.rol[0] == 'PROPIETARIO'}"
+            <div class="header-actions" style="justify-content: flex-start; margin-bottom: 18px;"
+                 th:if="${param.rol != null && param.rol[0] == 'PROPIETARIO'}">
+                <a class="button"
                    th:href="@{/barrios/{id}/reservas/nueva(id=${barrio.id},rol=${param.rol[0]})}">
                     <i data-lucide="plus" aria-hidden="true"></i> Nueva reserva
                 </a>
