@@ -29,6 +29,10 @@ public class DatosDemoService {
     private final ISistema sistema;
     private final Administrador administrador;
     private final Propietario propietario;
+    private final Propietario propietarioDos;
+    private final Propietario propietarioTres;
+    private final Propietario propietarioCuatro;
+    private final Propietario propietarioCinco;
     private final PersonalSeguridad seguridad;
     private final Tecnico tecnico;
 
@@ -37,6 +41,10 @@ public class DatosDemoService {
         this.sistema = new SistemaProxy(gestionPrincipal);
         this.administrador = new Administrador(1L, "Ana Administradora", "ana@barrios.com", "Administracion");
         this.propietario = new Propietario(2L, "Pedro Propietario", "pedro@barrios.com", "1133445566");
+        this.propietarioDos = new Propietario(5L, "Lucia Lorenzo", "lucia@barrios.com", "1144556677");
+        this.propietarioTres = new Propietario(6L, "Marcos Diaz", "marcos@barrios.com", "1155667788");
+        this.propietarioCuatro = new Propietario(7L, "Carla Nunez", "carla@barrios.com", "1166778899");
+        this.propietarioCinco = new Propietario(8L, "Diego Fernandez", "diego@barrios.com", "1177889900");
         this.seguridad = new PersonalSeguridad(3L, "Sofia Seguridad", "sofia@barrios.com", "Manana");
         this.tecnico = new Tecnico(4L, "Tomas Tecnico", "tomas@barrios.com", "Mantenimiento");
         inicializar();
@@ -52,13 +60,21 @@ public class DatosDemoService {
         sistema.crearBarrio(administrador, losRobles);
         sistema.crearBarrio(administrador, laEscondida);
 
-        Vivienda vivienda = new Vivienda(1L, "Casa 15", propietario);
+        Vivienda vivienda = new Vivienda(1L, "15", null, propietario, losRobles);
+        Vivienda viviendaDos = new Vivienda(2L, "98", null, propietarioDos, losRobles);
+        Vivienda viviendaTres = new Vivienda(3L, "23", null, propietarioTres, losRobles);
+        Vivienda viviendaCuatro = new Vivienda(4L, "47", null, propietarioCuatro, losRobles);
+        Vivienda viviendaCinco = new Vivienda(5L, "61", null, propietarioCinco, losRobles);
         Amenidad quincho = new Amenidad(1L, "Quincho", "Salon con parrilla");
         Amenidad pileta = new Amenidad(2L, "Pileta", "Piscina climatizada");
         Amenidad sum = new Amenidad(3L, "SUM", "Salon de usos multiples");
         Amenidad cancha = new Amenidad(4L, "Cancha de futbol", "Cancha de cesped sintetico");
 
         sistema.registrarVivienda(administrador, losRobles, vivienda);
+        sistema.registrarVivienda(administrador, losRobles, viviendaDos);
+        sistema.registrarVivienda(administrador, losRobles, viviendaTres);
+        sistema.registrarVivienda(administrador, losRobles, viviendaCuatro);
+        sistema.registrarVivienda(administrador, losRobles, viviendaCinco);
         sistema.registrarAmenidad(administrador, losRobles, quincho);
         sistema.registrarAmenidad(administrador, losRobles, pileta);
         sistema.registrarAmenidad(administrador, losRobles, sum);
@@ -96,6 +112,23 @@ public class DatosDemoService {
     public Optional<Barrio> buscarBarrio(Long id) {
         return listarBarrios().stream()
                 .filter(barrio -> barrio.getId().equals(id))
+                .findFirst();
+    }
+
+    /**
+     * Resuelve el Propietario real asociado a un numero de lote dentro de un
+     * barrio, buscando la Vivienda cuyo numero coincide (sin distinguir
+     * mayusculas ni espacios extremos). Se usa para identificar al usuario
+     * que ingreso por el login simulado sin necesidad de una sesion real.
+     */
+    public Optional<Propietario> buscarPropietarioPorLote(Barrio barrio, String lote) {
+        if (lote == null || lote.isBlank()) {
+            return Optional.empty();
+        }
+        String loteNormalizado = lote.trim();
+        return barrio.getViviendas().stream()
+                .filter(v -> v.getNumero() != null && v.getNumero().trim().equalsIgnoreCase(loteNormalizado))
+                .map(Vivienda::getPropietario)
                 .findFirst();
     }
 
@@ -171,7 +204,7 @@ public class DatosDemoService {
         return sistema.registrarEgreso(seguridad, barrio, autorizacion.get().getVisitante());
     }
 
-    public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha) {
+    public ResultadoOperacion<?> crearReserva(Barrio barrio, Long amenidadId, LocalDate fecha, String lote) {
         Optional<Amenidad> amenidad = barrio.getAmenidades().stream()
                 .filter(a -> a.getId().equals(amenidadId))
                 .findFirst();
@@ -188,10 +221,12 @@ public class DatosDemoService {
                     + " ya tiene una reserva para el " + fecha + ". Elegi otra fecha.");
         }
 
+        Propietario quienReserva = buscarPropietarioPorLote(barrio, lote).orElse(propietario);
+
         long proximoId = barrio.getReservas().size() + 1L;
         ReservaAmenidad reserva = new ReservaAmenidad(
-                proximoId, amenidad.get(), propietario, fecha, "PENDIENTE");
+                proximoId, amenidad.get(), quienReserva, fecha, "PENDIENTE");
 
-        return sistema.registrarReserva(propietario, barrio, reserva);
+        return sistema.registrarReserva(quienReserva, barrio, reserva);
     }
 }

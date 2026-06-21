@@ -3,7 +3,8 @@
 <aside class="sidebar"
        th:fragment="sidebar(active, tenant)"
        th:with="rol=${param.rol != null ? param.rol[0] : 'SIN_ROL'},
-                qs=${param.rol != null ? '?rol=' + param.rol[0] : ''}">
+                lote=${param.lote != null ? param.lote[0] : null},
+                qs=${param.rol != null ? '?rol=' + param.rol[0] + (lote != null ? '&amp;lote=' + lote : '') : ''}">
     <a class="sidebar-brand" th:href="${'/dashboard' + qs}">
         <span class="brand-mark"><i data-lucide="building-2" aria-hidden="true"></i></span>
         <span>

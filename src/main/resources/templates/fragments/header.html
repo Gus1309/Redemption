@@ -3,7 +3,7 @@
 <header class="page-header" th:fragment="header(title, subtitle, tenant)">
     <div>
         <div class="breadcrumb">
-            <a th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null})}"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a>
+            <a th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}"><i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard</a>
             <span th:if="${tenant != null}">/</span>
             <span th:if="${tenant != null}" th:text="${tenant.nombre}">Barrio</span>
         </div>
@@ -11,10 +11,10 @@
         <p th:text="${subtitle}">Subtitulo</p>
     </div>
     <div class="header-actions">
-        <a class="button secondary compact" th:if="${tenant != null}" th:href="@{/barrios/{id}(id=${tenant.id},rol=${param.rol != null ? param.rol[0] : null})}">
+        <a class="button secondary compact" th:if="${tenant != null}" th:href="@{/barrios/{id}(id=${tenant.id},rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}">
             <i data-lucide="panel-left" aria-hidden="true"></i> Panel
         </a>
-        <a class="button secondary compact" th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null})}">
+        <a class="button secondary compact" th:href="@{/dashboard(rol=${param.rol != null ? param.rol[0] : null},lote=${param.lote != null ? param.lote[0] : null})}">
             <i data-lucide="layout-dashboard" aria-hidden="true"></i> Dashboard
         </a>
         <a class="button secondary compact" th:href="@{/}">

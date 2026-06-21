@@ -246,6 +246,7 @@ svg {
 }
 
 .page-header > div {
+    flex: 1 1 320px;
     min-width: 0;
 }
 
@@ -474,6 +475,25 @@ svg {
 }
 
 .select-field select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(23, 107, 91, 0.13);
+}
+
+.select-field input[type="text"],
+.select-field input[type="date"] {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font: inherit;
+    min-height: 46px;
+    outline: none;
+    padding: 0 14px;
+    width: 100%;
+}
+
+.select-field input[type="text"]:focus,
+.select-field input[type="date"]:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(23, 107, 91, 0.13);
 }

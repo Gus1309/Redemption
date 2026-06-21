@@ -151,13 +151,14 @@ public class BarrioWebController {
                                @RequestParam Long amenidadId,
                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
                                @RequestParam(required = false) String rol,
+                               @RequestParam(required = false) String lote,
                                Model model) {
         Barrio barrio = cargarBarrio(id, model);
         if (!esPropietario(rol)) {
             return "redirect:/barrios/" + id + "/reservas" + queryRol(rol);
         }
 
-        ResultadoOperacion<?> resultado = datosDemoService.crearReserva(barrio, amenidadId, fecha);
+        ResultadoOperacion<?> resultado = datosDemoService.crearReserva(barrio, amenidadId, fecha, lote);
 
         if (!resultado.isExitoso()) {
             model.addAttribute("amenidades", barrio.getAmenidades());
