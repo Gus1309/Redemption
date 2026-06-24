@@ -1,18 +1,14 @@
 package com.barrios.notificacion;
 
-import com.barrios.factory.NotificacionFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Patron Observer.
- *
- * Actua como sujeto observable: mantiene una lista de observadores y les
- * informa eventos relevantes mediante notificaciones formateadas. Esto
- * desacopla a quien genera el evento de quien recibe el aviso.
- */
+import com.barrios.factory.NotificacionFactory;
+
+///Patron Observer.
+///Actua como sujeto observable
+
 public class CentroNotificaciones implements IObservable {
     private final List<IObserver> observadores = new ArrayList<>();
     private final NotificacionFactory factory = new NotificacionFactory();
